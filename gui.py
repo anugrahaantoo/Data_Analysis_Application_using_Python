@@ -2,6 +2,7 @@
 import tkinter as tk
 from tkinter import messagebox
 from data_analysis import load_data, also_likes, generate_also_likes_graph
+from reader_analysis import analyze_top_readers
 from visualization import generate_country_histogram, generate_continent_histogram, generate_main_browser_histogram
 
 class Application(tk.Tk):
@@ -33,6 +34,9 @@ class Application(tk.Tk):
 
         self.generate_continent_button = tk.Button(self, text="Generate Continent Histogram", command=self.generate_continent_histogram)
         self.generate_continent_button.pack()
+
+        self.generate_top10_button = tk.Button(self, text="Top 10 Readers", command=self.generate_analyze_top_readers)
+        self.generate_top10_button.pack()
 
         self.generate_also_likes_button = tk.Button(self, text="Generate 'Also Likes' List", command=self.generate_also_likes)
         self.generate_also_likes_button.pack()
@@ -72,6 +76,13 @@ class Application(tk.Tk):
         }
         if hasattr(self, 'df'):
             generate_continent_histogram(self.df, doc_uuid, continent_mapping)
+        else:
+            messagebox.showerror("Error", "Data not loaded yet.")
+
+    def generate_analyze_top_readers(self):
+        if hasattr(self, 'df'):
+            top_readers_list = analyze_top_readers(self.df)
+            messagebox.showinfo("Top 10 Readers", "\n ".join(top_readers_list))
         else:
             messagebox.showerror("Error", "Data not loaded yet.")
 
