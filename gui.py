@@ -1,6 +1,5 @@
-# gui.py
 import tkinter as tk
-from tkinter import messagebox
+from tkinter import messagebox, filedialog
 import dask.dataframe as dd
 from data_analysis import load_data, also_likes, generate_also_likes_graph
 from reader_analysis import analyze_top_readers
@@ -10,42 +9,58 @@ class Application(tk.Tk):
     def __init__(self):
         super().__init__()
         self.title("Data Analytics")
-        self.geometry("500x400")
+        self.geometry("600x300")
 
         # Input for file path and document UUID
-        self.file_path_label = tk.Label(self, text="Enter dataset file path:")
-        self.file_path_label.pack()
-        self.file_path_entry = tk.Entry(self, width=50)
-        self.file_path_entry.pack()
+        self.file_path_label = tk.Label(self, text="Select dataset file:")
+        self.file_path_label.grid(row=0, column=0, padx=10, pady=5, sticky="e")
+
+        self.file_path_entry = tk.Entry(self, width=40)
+        self.file_path_entry.grid(row=0, column=1, padx=10, pady=5)
+
+        self.browse_button = tk.Button(self, text="Browse", command=self.browse_file)
+        self.browse_button.grid(row=0, column=2, padx=10, pady=5)
+
+        # Load Data button below the first row of inputs
+        self.load_button = tk.Button(self, text="Load Data", command=self.load_data)
+        self.load_button.grid(row=0, column=3, padx=10, pady=5)
 
         self.doc_uuid_label = tk.Label(self, text="Enter Document UUID:")
-        self.doc_uuid_label.pack()
-        self.doc_uuid_entry = tk.Entry(self, width=50)
-        self.doc_uuid_entry.pack()
+        self.doc_uuid_label.grid(row=2, column=0, padx=10, pady=5, sticky="e")
 
-        # Buttons for generating reports
-        self.load_button = tk.Button(self, text="Load Data", command=self.load_data)
-        self.load_button.pack()
+        self.doc_uuid_entry = tk.Entry(self, width=40)
+        self.doc_uuid_entry.grid(row=2, column=1, padx=10, pady=5)
 
+        # Buttons for generating reports, using grid layout
         self.generate_browser_button = tk.Button(self, text="Generate Browser Histogram", command=self.generate_browser_histogram)
-        self.generate_browser_button.pack()
+        self.generate_browser_button.grid(row=3, column=0, columnspan=4, pady=5)
 
         self.generate_country_button = tk.Button(self, text="Generate Country Histogram", command=self.generate_country_histogram)
-        self.generate_country_button.pack()
+        self.generate_country_button.grid(row=4, column=0, columnspan=4, pady=5)
 
         self.generate_continent_button = tk.Button(self, text="Generate Continent Histogram", command=self.generate_continent_histogram)
-        self.generate_continent_button.pack()
+        self.generate_continent_button.grid(row=5, column=0, columnspan=4, pady=5)
 
         self.generate_top10_button = tk.Button(self, text="Top 10 Readers", command=self.generate_analyze_top_readers)
-        self.generate_top10_button.pack()
+        self.generate_top10_button.grid(row=6, column=0, columnspan=4, pady=5)
 
         self.generate_also_likes_button = tk.Button(self, text="Generate 'Also Likes' List", command=self.generate_also_likes)
-        self.generate_also_likes_button.pack()
+        self.generate_also_likes_button.grid(row=7, column=0, columnspan=4, pady=5)
 
-    
+    def browse_file(self):
+        """
+        Opens a file dialog to select a file and updates the file path entry field.
+        """
+        file_path = filedialog.askopenfilename(title="Select a Dataset File", filetypes=[("JSON Files", "*.json;*.gz")])
+        if file_path:
+            self.file_path_entry.delete(0, tk.END)  # Clear any previous entry
+            self.file_path_entry.insert(0, file_path)  # Insert the selected file path
 
     def load_data(self):
         file_path = self.file_path_entry.get()
+        if not file_path:
+            messagebox.showerror("Error", "Please select a dataset file.")
+            return
         self.df = load_data(file_path)
         
     def generate_browser_histogram(self):
