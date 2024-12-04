@@ -1,5 +1,3 @@
-import graphviz
-
 import pandas as pd
 
 def get_readers_of_document(data, doc_uuid):
@@ -57,19 +55,17 @@ def sort_by_readers(doc_counts):
     """
     return doc_counts.sort_values(ascending=False)
 
+# Example Usage
+if __name__ == "__main__":
+    # Example DataFrame
+    data = pd.DataFrame({
+        'subject_doc_id': ['doc1', 'doc2', 'doc1', 'doc3', 'doc2', 'doc4', 'doc3', 'doc5'],
+        'visitor_uuid': ['reader1', 'reader1', 'reader2', 'reader2', 'reader3', 'reader3', 'reader4', 'reader4']
+    })
 
-def generate_graph(data, doc_id):
-    """Generate a Graphviz graph showing relationships between readers and documents."""
-    readers = data[data['subject_doc_id'] == doc_id]['visitor_uuid']
-    liked_docs = data[data['visitor_uuid'].isin(readers)]
-    dot = graphviz.Digraph()
+    # Input document UUID
+    doc_uuid = 'doc1'
 
-    dot.node(doc_id[-4:], style='filled', color='green')
-    for _, row in liked_docs.iterrows():
-        reader_id = row['visitor_uuid'][-4:]
-        doc_id = row['subject_doc_id'][-4:]
-        dot.node(reader_id, shape='circle')
-        dot.node(doc_id, shape='box')
-        dot.edge(reader_id, doc_id)
-
-    dot.render('also_likes_graph', format='pdf', cleanup=True)
+    # Generate the "also likes" list
+    also_likes_list = also_likes(data, doc_uuid)
+    print("Top 10 'Also Liked' documents:", also_likes_list)

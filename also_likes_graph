@@ -1,9 +1,0 @@
-digraph {
-	6798 [color=green style=filled]
-	"73d3" [shape=circle]
-	6798 [shape=box]
-	"73d3" -> 6798
-	"73d3" [shape=circle]
-	6798 [shape=box]
-	"73d3" -> 6798
-}

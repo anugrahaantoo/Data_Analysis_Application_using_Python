@@ -1,6 +1,7 @@
 # gui.py
 import tkinter as tk
 from tkinter import messagebox
+import dask.dataframe as dd
 from data_analysis import load_data, also_likes, generate_also_likes_graph
 from reader_analysis import analyze_top_readers
 from visualization import generate_country_histogram, generate_continent_histogram, generate_main_browser_histogram
@@ -41,12 +42,12 @@ class Application(tk.Tk):
         self.generate_also_likes_button = tk.Button(self, text="Generate 'Also Likes' List", command=self.generate_also_likes)
         self.generate_also_likes_button.pack()
 
+    
+
     def load_data(self):
         file_path = self.file_path_entry.get()
         self.df = load_data(file_path)
-        if self.df is not None:
-            messagebox.showinfo("Success", "Data Loaded Successfully")
-
+        
     def generate_browser_histogram(self):
         if hasattr(self, 'df'):
             generate_main_browser_histogram(self.df)
@@ -87,12 +88,29 @@ class Application(tk.Tk):
             messagebox.showerror("Error", "Data not loaded yet.")
 
     def generate_also_likes(self):
-        doc_uuid = self.doc_uuid_entry.get()
+        """
+        Generate and display the 'also likes' list for the given document UUID.
+        """
+        doc_uuid = self.doc_uuid_entry.get()  # Get the input document UUID from the GUI
+        if not doc_uuid:
+            messagebox.showerror("Error", "Please enter a Document UUID.")
+            return
+
         if hasattr(self, 'df'):
-            also_likes_list = also_likes(self.df, doc_uuid)
-            messagebox.showinfo("Also Likes", ", ".join(also_likes_list))
+            try:
+                # Generate the 'also likes' list using the also_likes function
+                also_likes_list = also_likes(self.df, doc_uuid)
+                
+                # Display the result in a message box
+                if also_likes_list:
+                    messagebox.showinfo("Also Likes", "Top 10 'Also Liked' Documents:\n" + ", ".join(also_likes_list))
+                else:
+                    messagebox.showinfo("Also Likes", "No 'also liked' documents found for the given Document UUID.")
+            except Exception as e:
+                messagebox.showerror("Error", f"An error occurred: {e}")
         else:
             messagebox.showerror("Error", "Data not loaded yet.")
+
 
 if __name__ == "__main__":
     app = Application()

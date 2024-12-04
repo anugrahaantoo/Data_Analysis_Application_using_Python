@@ -3,20 +3,37 @@ import json
 import pandas as pd
 import re
 from graphviz import Digraph
+import dask.dataframe as dd
+from tkinter import messagebox
 
 # Function to load data from a JSON file into a Pandas DataFrame
 def load_data(file_path):
     try:
-        with open(file_path, 'r') as file:
-            data = [json.loads(line) for line in file]
-        df = pd.DataFrame(data)
-        return df
+        # Check if the file is compressed (ends with .gz)
+        if file_path.endswith('.gz'):
+            # Use Dask for large compressed JSON files
+            df = dd.read_json(file_path, compression='gzip')
+        else:
+            # Use Dask for large uncompressed JSON files
+            df = dd.read_json(file_path)
+        
+        # Compute the Dask DataFrame into a Pandas DataFrame
+        df = df.compute()  # Converts Dask dataframe to a Pandas DataFrame
+
+        # Check if the dataframe is not empty
+        if df is not None and not df.empty:
+            messagebox.showinfo("Success", "Data Loaded Successfully")
+            return df
+        else:
+            messagebox.showerror("Error", "The file is empty or invalid.")
+    
     except FileNotFoundError:
-        print(f"Error: File not found at {file_path}")
+        messagebox.showerror("Error", f"File not found at {file_path}")
     except json.JSONDecodeError as e:
-        print(f"JSON decoding error: {e}")
+        messagebox.showerror("Error", f"JSON decoding error: {e}")
     except Exception as e:
-        print(f"Unexpected error: {e}")
+        messagebox.showerror("Error", f"An error occurred while loading the data: {e}")
+
     return None
 
 # Extract main browser name using regex
