@@ -120,6 +120,7 @@ class Application(tk.Tk):
         Generate and display the 'also likes' list for the given document UUID, and display its graph.
         """
         doc_uuid = self.doc_uuid_entry.get()  # Get the input document UUID from the GUI
+        visitor_id = self.visitor_id_entry.get()
         if not doc_uuid:
             messagebox.showerror("Error", "Please enter a Document UUID.")
             return
@@ -127,8 +128,10 @@ class Application(tk.Tk):
         if hasattr(self, 'df'):
             try:
                 # Generate the 'also likes' list using the also_likes function
-                also_likes_list = also_likes(self.df, doc_uuid)
-                
+                if visitor_id:
+                    also_likes_list = also_likes(self.df, doc_uuid,visitor_id)
+                else: 
+                    also_likes_list = also_likes(self.df, doc_uuid)
                 # Display the result in a message box
                 if also_likes_list:
                     messagebox.showinfo("Also Likes", "Top 10 'Also Liked' Documents:\n" + ", ".join(also_likes_list))
