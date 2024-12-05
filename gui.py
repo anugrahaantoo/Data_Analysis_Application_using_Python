@@ -38,23 +38,26 @@ class Application(tk.Tk):
         self.visitor_id_entry = tk.Entry(self, width=40)
         self.visitor_id_entry.grid(row=2, column=1, padx=10, pady=5)
 
+        # Set a uniform width for all buttons
+        button_width = 30  # Adjust this value as needed
+
         # Buttons for generating reports, using grid layout
-        self.generate_browser_button = tk.Button(self, text="Generate Browser Histogram", command=self.generate_browser_histogram)
+        self.generate_browser_button = tk.Button(self, text="Generate Browser Histogram", command=self.generate_browser_histogram, width=button_width)
         self.generate_browser_button.grid(row=3, column=0, columnspan=4, pady=5)
 
-        self.generate_country_button = tk.Button(self, text="Generate Country Histogram", command=self.generate_country_histogram)
+        self.generate_country_button = tk.Button(self, text="Generate Country Histogram", command=self.generate_country_histogram, width=button_width)
         self.generate_country_button.grid(row=4, column=0, columnspan=4, pady=5)
 
-        self.generate_continent_button = tk.Button(self, text="Generate Continent Histogram", command=self.generate_continent_histogram)
+        self.generate_continent_button = tk.Button(self, text="Generate Continent Histogram", command=self.generate_continent_histogram, width=button_width)
         self.generate_continent_button.grid(row=5, column=0, columnspan=4, pady=5)
 
-        self.generate_top10_button = tk.Button(self, text="Top 10 Readers", command=self.generate_analyze_top_readers)
+        self.generate_top10_button = tk.Button(self, text="Top 10 Readers", command=self.generate_analyze_top_readers, width=button_width)
         self.generate_top10_button.grid(row=6, column=0, columnspan=4, pady=5)
 
-        self.generate_also_likes_button = tk.Button(self, text="Generate 'Also Likes' List", command=self.generate_also_likes)
+        self.generate_also_likes_button = tk.Button(self, text="Generate 'Also Likes' List", command=self.generate_also_likes, width=button_width)
         self.generate_also_likes_button.grid(row=7, column=0, columnspan=4, pady=5)
 
-        self.generate_also_likes_graph_button = tk.Button(self, text="Generate 'Also Likes' Graph", command=self.generate_also_likes_graph)
+        self.generate_also_likes_graph_button = tk.Button(self, text="Generate 'Also Likes' Graph", command=self.generate_also_likes_graph, width=button_width)
         self.generate_also_likes_graph_button.grid(row=9, column=0, columnspan=4, pady=5)
 
     def browse_file(self):
