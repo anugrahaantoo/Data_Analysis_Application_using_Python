@@ -11,7 +11,7 @@ def analyze_top_readers(df):
 
         # Format the results for display
         top_readers_list = [
-            f"{uuid}: {time} seconds" for uuid, time in top_readers.items()
+            f"{uuid} : {time}" for uuid, time in top_readers.items()
         ]
 
         return top_readers_list
