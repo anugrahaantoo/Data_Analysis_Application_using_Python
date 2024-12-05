@@ -1,7 +1,7 @@
 import tkinter as tk
 from tkinter import messagebox, filedialog
-import dask.dataframe as dd
-from data_analysis import load_data, also_likes, generate_also_likes_graph
+from also_likes import generate_also_likes_graph, also_likes
+from data_analysis import load_data
 from reader_analysis import analyze_top_readers
 from visualization import generate_country_histogram, generate_continent_histogram, generate_main_browser_histogram
 
@@ -9,7 +9,7 @@ class Application(tk.Tk):
     def __init__(self):
         super().__init__()
         self.title("Data Analytics")
-        self.geometry("600x300")
+        self.geometry("600x320")
 
         # Input for file path and document UUID
         self.file_path_label = tk.Label(self, text="Select dataset file:")
@@ -26,10 +26,17 @@ class Application(tk.Tk):
         self.load_button.grid(row=0, column=3, padx=10, pady=5)
 
         self.doc_uuid_label = tk.Label(self, text="Enter Document UUID:")
-        self.doc_uuid_label.grid(row=2, column=0, padx=10, pady=5, sticky="e")
+        self.doc_uuid_label.grid(row=1, column=0, padx=10, pady=5, sticky="e")
 
         self.doc_uuid_entry = tk.Entry(self, width=40)
-        self.doc_uuid_entry.grid(row=2, column=1, padx=10, pady=5)
+        self.doc_uuid_entry.grid(row=1, column=1, padx=10, pady=5)
+
+        # Visitor ID Input
+        self.visitor_id_label = tk.Label(self, text="Enter Visitor ID:")
+        self.visitor_id_label.grid(row=2, column=0, padx=10, pady=5, sticky="e")
+
+        self.visitor_id_entry = tk.Entry(self, width=40)
+        self.visitor_id_entry.grid(row=2, column=1, padx=10, pady=5)
 
         # Buttons for generating reports, using grid layout
         self.generate_browser_button = tk.Button(self, text="Generate Browser Histogram", command=self.generate_browser_histogram)
@@ -46,6 +53,9 @@ class Application(tk.Tk):
 
         self.generate_also_likes_button = tk.Button(self, text="Generate 'Also Likes' List", command=self.generate_also_likes)
         self.generate_also_likes_button.grid(row=7, column=0, columnspan=4, pady=5)
+
+        self.generate_also_likes_graph_button = tk.Button(self, text="Generate 'Also Likes' Graph", command=self.generate_also_likes_graph)
+        self.generate_also_likes_graph_button.grid(row=9, column=0, columnspan=4, pady=5)
 
     def browse_file(self):
         """
@@ -104,7 +114,7 @@ class Application(tk.Tk):
 
     def generate_also_likes(self):
         """
-        Generate and display the 'also likes' list for the given document UUID.
+        Generate and display the 'also likes' list for the given document UUID, and display its graph.
         """
         doc_uuid = self.doc_uuid_entry.get()  # Get the input document UUID from the GUI
         if not doc_uuid:
@@ -121,6 +131,30 @@ class Application(tk.Tk):
                     messagebox.showinfo("Also Likes", "Top 10 'Also Liked' Documents:\n" + ", ".join(also_likes_list))
                 else:
                     messagebox.showinfo("Also Likes", "No 'also liked' documents found for the given Document UUID.")
+                
+                # Generate the graph for the 'also likes' list
+             
+            except Exception as e:
+                messagebox.showerror("Error", f"An error occurred: {e}")
+        else:
+            messagebox.showerror("Error", "Data not loaded yet.")
+
+    def generate_also_likes_graph(self):
+        """Generate and display the 'Also Likes' graph for the given document UUID."""
+        doc_uuid = self.doc_uuid_entry.get()
+        visitor_id = self.visitor_id_entry.get()  # Retrieve the visitor ID from the GUI
+
+        if not doc_uuid:
+            messagebox.showerror("Error", "Please enter a Document UUID.")
+            return
+
+        if hasattr(self, 'df'):
+            try:
+                # Pass both doc_uuid and visitor_id (if provided) to the function
+                if visitor_id:
+                    generate_also_likes_graph(self.df, doc_uuid, visitor_id)
+                else:
+                    generate_also_likes_graph(self.df, doc_uuid)
             except Exception as e:
                 messagebox.showerror("Error", f"An error occurred: {e}")
         else:

@@ -2,8 +2,8 @@
 import json
 import pandas as pd
 import re
-from graphviz import Digraph
 import dask.dataframe as dd
+
 from tkinter import messagebox
 
 # Function to load data from a JSON file into a Pandas DataFrame
@@ -66,29 +66,3 @@ def also_likes(df, doc_uuid):
         doc_counts = doc_counts.drop(doc_uuid)
     return doc_counts.head(10).index.tolist()
 
-# Function to generate the "Also Likes" graph
-def generate_also_likes_graph(df, doc_uuid):
-    readers = df[df['subject_doc_id'] == doc_uuid]['visitor_uuid'].unique()
-    if not readers.size:
-        return None
-    
-    all_relationships = []
-    for reader in readers:
-        related_docs = df[df['visitor_uuid'] == reader]['subject_doc_id'].unique()
-        for doc in related_docs:
-            all_relationships.append((reader[-4:], doc[-4:]))
-    
-    graph = Digraph(format='pdf')
-    graph.attr(rankdir='TB', size='8,5')
-    graph.node(doc_uuid[-4:], label=f"{doc_uuid[-4:]}", style="filled", color="green")
-    
-    for reader in readers:
-        graph.node(reader[-4:], label=f"{reader[-4:]}", style="filled", color="green")
-    
-    for reader, doc in all_relationships:
-        graph.node(doc, label=doc)
-        graph.edge(reader, doc)
-
-    output_file = "also_likes_graph"
-    graph.render(output_file, cleanup=True)
-    return output_file

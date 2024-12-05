@@ -1,5 +1,4 @@
-import graphviz
-
+from graphviz import Digraph
 import pandas as pd
 
 def get_readers_of_document(data, doc_uuid):
@@ -20,7 +19,7 @@ def get_documents_read_by_visitor(data, visitor_uuid):
     """
     return data[data['visitor_uuid'] == visitor_uuid]['subject_doc_id'].unique().tolist()
 
-def also_likes(data, doc_uuid, sorting_function, visitor_uuid=None):
+def also_likes(data, doc_uuid, visitor_uuid=None):
     """
     Generate an 'also likes' list for the given document UUID.
     :param data: DataFrame containing 'subject_doc_id' and 'visitor_uuid'.
@@ -44,32 +43,68 @@ def also_likes(data, doc_uuid, sorting_function, visitor_uuid=None):
 
     # Aggregate counts and apply sorting function
     doc_counts = liked_docs.value_counts()
-    sorted_docs = sorting_function(doc_counts)
+    #sorted_docs = sorting_function(doc_counts)
 
     # Return the top 10 document UUIDs
-    return sorted_docs.head(10).index.tolist()
+    return doc_counts.head(10).index.tolist()
 
-def sort_by_readers(doc_counts):
+
+def generate_also_likes_graph(df, doc_uuid, visitor_uuid=None):
     """
-    Sort documents by the number of readers.
-    :param doc_counts: Pandas Series with document UUIDs as index and counts as values.
-    :return: Sorted Series.
+    Generate an 'Also Likes' graph with ranks for readers and documents.
+    Highlight the input document and optionally an input visitor.
     """
-    return doc_counts.sort_values(ascending=False)
+    # Get readers for the input document
+    readers = df[df['subject_doc_id'] == doc_uuid]['visitor_uuid'].unique()
+    if not readers.size:
+        print("No readers found for the given document.")
+        return None
 
+    # Collect relationships for the graph
+    all_relationships = []
+    for reader in readers:
+        related_docs = df[df['visitor_uuid'] == reader]['subject_doc_id'].unique()
+        for doc in related_docs:
+            all_relationships.append((reader[-4:], doc[-4:]))
 
-def generate_graph(data, doc_id):
-    """Generate a Graphviz graph showing relationships between readers and documents."""
-    readers = data[data['subject_doc_id'] == doc_id]['visitor_uuid']
-    liked_docs = data[data['visitor_uuid'].isin(readers)]
-    dot = graphviz.Digraph()
+    # Create the Graphviz Digraph
+    graph = Digraph(format='pdf')
+    graph.attr(ranksep='.75', ratio='compress', size='15,22', orientation='landscape', rotate='180')
 
-    dot.node(doc_id[-4:], style='filled', color='green')
-    for _, row in liked_docs.iterrows():
-        reader_id = row['visitor_uuid'][-4:]
-        doc_id = row['subject_doc_id'][-4:]
-        dot.node(reader_id, shape='circle')
-        dot.node(doc_id, shape='box')
-        dot.edge(reader_id, doc_id)
+    # Highlight the input document
+    graph.node(doc_uuid[-4:], label=f"{doc_uuid[-4:]}", shape="circle", style="filled", color=".3 .9 .7")
 
-    dot.render('also_likes_graph', format='pdf', cleanup=True)
+    # Add reader nodes
+    for reader in readers:
+        if reader == visitor_uuid:  # Highlight the input visitor
+            graph.node(reader[-4:], label=f"{reader[-4:]}", shape="box", style="filled", color=".3 .9 .7")
+        else:
+            graph.node(reader[-4:], label=f"{reader[-4:]}", shape="box")
+
+    # Add document nodes and arrows
+    for reader, doc in all_relationships:
+        if doc != doc_uuid[-4:]:
+            graph.node(doc, label=f"{doc}", shape="circle")
+        graph.edge(reader, doc)
+
+    # Set ranks for Readers and Documents
+    with graph.subgraph() as readers_rank:
+        readers_rank.attr(rank="same")
+        readers_rank.node("Readers")
+        for reader in readers:
+            readers_rank.node(reader[-4:])
+
+    with graph.subgraph() as documents_rank:
+        documents_rank.attr(rank="same")
+        documents_rank.node("Documents")
+        for _, doc in all_relationships:
+            documents_rank.node(doc)
+
+    # Render the graph to both .ps and .pdf formats
+    output_base_path = f"also_likes_{doc_uuid[-4:]}"
+    ps_output_path = graph.render(output_base_path, format='ps')  # PostScript
+    pdf_output_path = graph.render(output_base_path, format='pdf')  # PDF
+
+    print(f"Graph generated as PostScript: {ps_output_path}")
+    print(f"Graph generated as PDF: {pdf_output_path}")
+    

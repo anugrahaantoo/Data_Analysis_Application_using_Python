@@ -1,4 +1,3 @@
-# visualization.py
 import matplotlib.pyplot as plt
 from data_analysis import extract_browser_name
 
