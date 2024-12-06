@@ -2,10 +2,10 @@ import tkinter as tk
 from tkinter import ttk
 import matplotlib.pyplot as plt
 from tkinter import messagebox, filedialog
-from also_likes import generate_also_likes_graph, also_likes
+from also_likes import also_likes_graph, also_likes
 from data_analysis import load_data
 from reader_analysis import analyze_top_readers
-from visualization import generate_country_histogram, generate_continent_histogram, generate_browser_histogram, generate_detailed_browser_histogram
+from visualization import country_histogram, continent_histogram, browser_histogram, detailed_browser_histogram
 
 continent_mapping = {
     # North America
@@ -96,26 +96,26 @@ class Application(tk.Tk):
         button_width = 30  # Adjust this value as needed
 
         # Buttons for generating reports, using grid layout
-        self.generate_detailed_browser_button = tk.Button(self, text="Generate Detailed Browser Histogram ", command=self.generate_detailed_browser_histogram, width=button_width)
-        self.generate_detailed_browser_button.grid(row=5, column=1, pady=5)
+        self.detailed_browser_button = tk.Button(self, text="Generate Detailed Browser Histogram ", command=self.detailed_browser_histogram, width=button_width)
+        self.detailed_browser_button.grid(row=5, column=1, pady=5)
 
-        self.generate_browser_button = tk.Button(self, text="Generate Browser Histogram", command=self.generate_browser_histogram, width=button_width)
-        self.generate_browser_button.grid(row=6, column=1, pady=5)
+        self.browser_button = tk.Button(self, text="Generate Browser Histogram", command=self.browser_histogram, width=button_width)
+        self.browser_button.grid(row=6, column=1, pady=5)
 
-        self.generate_country_button = tk.Button(self, text="Generate Country Histogram", command=self.generate_country_histogram, width=button_width)
-        self.generate_country_button.grid(row=7, column=1, pady=5)
+        self.country_button = tk.Button(self, text="Generate Country Histogram", command=self.country_histogram, width=button_width)
+        self.country_button.grid(row=7, column=1, pady=5)
 
-        self.generate_continent_button = tk.Button(self, text="Generate Continent Histogram", command=self.generate_continent_histogram, width=button_width)
-        self.generate_continent_button.grid(row=8, column=1, pady=5)
+        self.continent_button = tk.Button(self, text="Generate Continent Histogram", command=self.continent_histogram, width=button_width)
+        self.continent_button.grid(row=8, column=1, pady=5)
 
-        self.generate_top10_button = tk.Button(self, text="Top 10 Readers", command=self.generate_analyze_top_readers, width=button_width)
-        self.generate_top10_button.grid(row=4, column=2, pady=5)
+        self.top10_button = tk.Button(self, text="Top 10 Readers", command=self.analyze_top_readers, width=button_width)
+        self.top10_button.grid(row=4, column=2, pady=5)
 
-        self.generate_also_likes_button = tk.Button(self, text="Generate 'Also Likes' List", command=self.generate_also_likes, width=button_width)
-        self.generate_also_likes_button.grid(row=4, column=3, pady=5)
+        self.also_likes_button = tk.Button(self, text="Generate 'Also Likes' List", command=self.also_likes, width=button_width)
+        self.also_likes_button.grid(row=4, column=3, pady=5)
 
-        self.generate_also_likes_graph_button = tk.Button(self, text="Generate 'Also Likes' Graph", command=self.generate_also_likes_graph, width=button_width)
-        self.generate_also_likes_graph_button.grid(row=9, column=1, pady=5)
+        self.also_likes_graph_button = tk.Button(self, text="Generate 'Also Likes' Graph", command=self.also_likes_graph, width=button_width)
+        self.also_likes_graph_button.grid(row=9, column=1, pady=5)
 
         # Top Readers Frame with Table
         self.top_readers_frame = tk.Frame(self)
@@ -167,41 +167,41 @@ class Application(tk.Tk):
         else:
             messagebox.showerror("Error", "The file is empty or invalid.")
     
-    def generate_detailed_browser_histogram(self):
+    def detailed_browser_histogram(self):
         
         if hasattr(self, 'df'):
-            generate_detailed_browser_histogram(self.df)
+            detailed_browser_histogram(self.df)
         else:
             messagebox.showerror("Error", "Data not loaded yet.")
    
-    def generate_browser_histogram(self):
+    def browser_histogram(self):
         
         if hasattr(self, 'df'):
-            generate_browser_histogram(self.df)
+            browser_histogram(self.df)
         else:
             messagebox.showerror("Error", "Data not loaded yet.")
 
-    def generate_country_histogram(self):
+    def country_histogram(self):
         doc_uuid = self.doc_uuid_entry.get()
         if not doc_uuid:
             messagebox.showerror("Error", "Please enter a Document UUID.")
             return
         if hasattr(self, 'df'):
-            generate_country_histogram(self.df, doc_uuid)
+            country_histogram(self.df, doc_uuid)
         else:
             messagebox.showerror("Error", "Data not loaded yet.")
 
-    def generate_continent_histogram(self):
+    def continent_histogram(self):
         doc_uuid = self.doc_uuid_entry.get()
         if not doc_uuid:
             messagebox.showerror("Error", "Please enter a Document UUID.")
             return
         if hasattr(self, 'df'):
-            generate_continent_histogram(self.df, doc_uuid, continent_mapping)
+            continent_histogram(self.df, doc_uuid, continent_mapping)
         else:
             messagebox.showerror("Error", "Data not loaded yet.")
 
-    def generate_analyze_top_readers(self):
+    def analyze_top_readers(self):
         if hasattr(self, 'df'):
             top_readers_list = analyze_top_readers(self.df)
             if top_readers_list:
@@ -218,7 +218,7 @@ class Application(tk.Tk):
         else:
             messagebox.showerror("Error", "Data not loaded yet.")
 
-    def generate_also_likes(self):
+    def also_likes(self):
         doc_uuid = self.doc_uuid_entry.get()
         visitor_id = self.visitor_id_entry.get()
         if not doc_uuid:
@@ -247,7 +247,7 @@ class Application(tk.Tk):
         else:
             messagebox.showerror("Error", "Data not loaded yet.")
 
-    def generate_also_likes_graph(self):
+    def also_likes_graph(self):
         doc_uuid = self.doc_uuid_entry.get()
         visitor_id = self.visitor_id_entry.get()
         if not doc_uuid:
@@ -257,9 +257,9 @@ class Application(tk.Tk):
         if hasattr(self, 'df'):
             try:
                 if visitor_id:
-                    generate_also_likes_graph(self.df, doc_uuid, visitor_id)
+                    also_likes_graph(self.df, doc_uuid, visitor_id)
                 else:
-                    generate_also_likes_graph(self.df, doc_uuid)
+                    also_likes_graph(self.df, doc_uuid)
             except Exception as e:
                 messagebox.showerror("Error", f"An error occurred: {e}")
         else:

@@ -1,8 +1,9 @@
 import argparse
+import matplotlib.pyplot as plt
 from data_analysis import load_data
 from reader_analysis import analyze_top_readers
-from visualization import generate_country_histogram, generate_continent_histogram, generate_detailed_browser_histogram, generate_browser_histogram 
-from also_likes import generate_also_likes_graph, also_likes
+from visualization import country_histogram, continent_histogram, detailed_browser_histogram, browser_histogram 
+from also_likes import also_likes_graph, also_likes
 from gui import Application
 from gui import continent_mapping 
 
@@ -11,7 +12,7 @@ def run_task_2a(file_name, doc_uuid):
     """Task 2a: Generate a histogram of countries of the viewers."""
     df = load_data(file_name)
     if df is not None:
-        generate_country_histogram(df, doc_uuid)  # Pass the required doc_uuid
+        country_histogram(df, doc_uuid)  # Pass the required doc_uuid
     else:
         print("Failed to load data for Task 2a.")
 
@@ -24,7 +25,7 @@ def run_task_2b(file_name, doc_uuid):
         print("Data Loaded Successfully! ")
         try:
             # Now we can directly use the continent_mapping imported from gui.py
-            generate_continent_histogram(df, doc_uuid, continent_mapping)
+            continent_histogram(df, doc_uuid, continent_mapping)
             print("Continent histogram generated successfully.")
         except Exception as e:
             print(f"Error generating continent histogram: {e}")
@@ -39,7 +40,7 @@ def run_task_3a(file_name):
     
     df = load_data(file_name)
     if df is not None:
-        generate_detailed_browser_histogram(df)
+        detailed_browser_histogram(df)
     else:
         print("Failed to load data for Task 3a.")
 
@@ -49,7 +50,7 @@ def run_task_3b(file_name):
     """
     df = load_data(file_name)
     if df is not None:
-        generate_browser_histogram(df)
+        browser_histogram(df)
     else:
         print("Failed to load data for Task 3b.")
 
@@ -84,7 +85,7 @@ def run_task_6( file_name,doc_uuid,visitor_uuid=None):
     """Task 6: Generate 'Also Likes' graph."""
     df = load_data(file_name)
     if df is not None:
-        generate_also_likes_graph(df, doc_uuid,visitor_uuid)
+        also_likes_graph(df, doc_uuid,visitor_uuid)
     else:
         print("Failed to load data for Task 6.")
 

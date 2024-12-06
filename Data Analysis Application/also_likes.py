@@ -51,7 +51,7 @@ def also_likes(data, doc_uuid, visitor_uuid=None):
     return doc_counts.head(10).index.tolist()
 
 
-def generate_also_likes_graph(df, doc_uuid, visitor_uuid=None):
+def also_likes_graph(df, doc_uuid, visitor_uuid=None):
     """
     Generate an 'Also Likes' graph with ranks for readers and documents.
     Highlight the input document and optionally an input visitor.
