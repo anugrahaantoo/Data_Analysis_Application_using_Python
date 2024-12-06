@@ -7,16 +7,58 @@ from reader_analysis import analyze_top_readers
 from visualization import generate_country_histogram, generate_continent_histogram, generate_main_browser_histogram
 
 continent_mapping = {
-            "US": "North America", "CA": "North America", "MX": "North America",
-            "BR": "South America", "AR": "South America", "CL": "South America", "CO": "South America", "PE": "South America",
-            "DE": "Europe", "FR": "Europe", "IT": "Europe", "ES": "Europe", "GB": "Europe", "RU": "Europe",
-            "PL": "Europe", "SE": "Europe", "NL": "Europe", "BE": "Europe", "AT": "Europe", "CH": "Europe",
-            "IN": "Asia", "CN": "Asia", "JP": "Asia", "KR": "Asia", "SG": "Asia", "MY": "Asia", "ID": "Asia",
-            "TH": "Asia", "PH": "Asia", "VN": "Asia", "PK": "Asia", "BD": "Asia", "IR": "Asia", "IQ": "Asia", "SA": "Asia",
-            "ZA": "Africa", "EG": "Africa", "NG": "Africa", "KE": "Africa", "GH": "Africa", "DZ": "Africa",
-            "MA": "Africa", "TZ": "Africa", "UG": "Africa", "SN": "Africa", "MW": "Africa", "ZM": "Africa", "MZ": "Africa",
-            "AU": "Oceania", "NZ": "Oceania", "FJ": "Oceania", "PG": "Oceania", "WS": "Oceania"
-        }
+    # North America
+    "US": "North America", "CA": "North America", "MX": "North America", "BM": "North America",
+    "BS": "North America", "BZ": "North America", "CR": "North America", "CU": "North America",
+    "DO": "North America", "GT": "North America", "HN": "North America", "HT": "North America",
+    "JM": "North America", "NI": "North America", "PA": "North America", "PR": "North America",
+    "SV": "North America", "TT": "North America",
+
+    # South America
+    "AR": "South America", "BO": "South America", "BR": "South America", "CL": "South America",
+    "CO": "South America", "EC": "South America", "GY": "South America", "PE": "South America",
+    "PY": "South America", "SR": "South America", "UY": "South America", "VE": "South America",
+
+    # Europe
+    "AL": "Europe", "AD": "Europe", "AT": "Europe", "BY": "Europe", "BE": "Europe", "BA": "Europe",
+    "BG": "Europe", "HR": "Europe", "CY": "Europe", "CZ": "Europe", "DK": "Europe", "EE": "Europe",
+    "FI": "Europe", "FR": "Europe", "DE": "Europe", "GR": "Europe", "HU": "Europe", "IS": "Europe",
+    "IE": "Europe", "IT": "Europe", "LV": "Europe", "LI": "Europe", "LT": "Europe", "LU": "Europe",
+    "MT": "Europe", "MD": "Europe", "MC": "Europe", "ME": "Europe", "NL": "Europe", "NO": "Europe",
+    "PL": "Europe", "PT": "Europe", "RO": "Europe", "RU": "Europe", "SM": "Europe", "RS": "Europe",
+    "SK": "Europe", "SI": "Europe", "ES": "Europe", "SE": "Europe", "CH": "Europe", "TR": "Europe",
+    "UA": "Europe", "GB": "Europe", "VA": "Europe",
+
+    # Asia
+    "AF": "Asia", "AM": "Asia", "AZ": "Asia", "BH": "Asia", "BD": "Asia", "BT": "Asia", "BN": "Asia",
+    "KH": "Asia", "CN": "Asia", "CY": "Asia", "GE": "Asia", "IN": "Asia", "ID": "Asia", "IR": "Asia",
+    "IQ": "Asia", "IL": "Asia", "JP": "Asia", "JO": "Asia", "KZ": "Asia", "KW": "Asia", "KG": "Asia",
+    "LA": "Asia", "LB": "Asia", "MY": "Asia", "MV": "Asia", "MN": "Asia", "MM": "Asia", "NP": "Asia",
+    "OM": "Asia", "PK": "Asia", "PH": "Asia", "QA": "Asia", "SA": "Asia", "SG": "Asia", "KR": "Asia",
+    "LK": "Asia", "SY": "Asia", "TJ": "Asia", "TH": "Asia", "TL": "Asia", "TM": "Asia", "AE": "Asia",
+    "UZ": "Asia", "VN": "Asia", "YE": "Asia",
+
+    # Africa
+    "DZ": "Africa", "AO": "Africa", "BJ": "Africa", "BW": "Africa", "BF": "Africa", "BI": "Africa",
+    "CM": "Africa", "CV": "Africa", "CF": "Africa", "TD": "Africa", "KM": "Africa", "CG": "Africa",
+    "DJ": "Africa", "EG": "Africa", "GQ": "Africa", "ER": "Africa", "SZ": "Africa", "ET": "Africa",
+    "GA": "Africa", "GM": "Africa", "GH": "Africa", "GN": "Africa", "GW": "Africa", "CI": "Africa",
+    "KE": "Africa", "LS": "Africa", "LR": "Africa", "MG": "Africa", "MW": "Africa", "ML": "Africa",
+    "MR": "Africa", "MU": "Africa", "MA": "Africa", "MZ": "Africa", "NA": "Africa", "NE": "Africa",
+    "NG": "Africa", "RW": "Africa", "ST": "Africa", "SN": "Africa", "SC": "Africa", "SL": "Africa",
+    "SO": "Africa", "ZA": "Africa", "SS": "Africa", "SD": "Africa", "TZ": "Africa", "TG": "Africa",
+    "TN": "Africa", "UG": "Africa", "ZM": "Africa", "ZW": "Africa",
+
+    # Oceania
+    "AU": "Oceania", "FJ": "Oceania", "KI": "Oceania", "MH": "Oceania", "FM": "Oceania", "NR": "Oceania",
+    "NZ": "Oceania", "PW": "Oceania", "PG": "Oceania", "WS": "Oceania", "SB": "Oceania", "TO": "Oceania",
+    "TV": "Oceania", "VU": "Oceania",
+
+    # Antarctica
+    "AQ": "Antarctica"
+}
+
+
 
 class Application(tk.Tk):
     def __init__(self):
