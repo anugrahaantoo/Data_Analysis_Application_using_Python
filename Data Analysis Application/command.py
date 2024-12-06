@@ -1,30 +1,31 @@
 import argparse
 import matplotlib.pyplot as plt
-from data_processing import load_data
-from top_readers import analyze_top_readers
+from data_processing import load_data   #function to load data from JSON
+from top_readers import analyze_top_readers     #function to analyze top readers
 from display_histogram import country_histogram, continent_histogram, detailed_browser_histogram, browser_histogram 
-from also_likes import also_likes_graph, also_likes
-from gui import Application
-from gui import continent_mapping 
+from also_likes import also_likes_graph, also_likes     #function for also like
+from gui import Application  #GUI class to lauch the GUI interface   
+from gui import continent_mapping # to map countries to contients
 
-
+#Plotting histogram of countries of the viewers
 def run_task_2a(file_name, doc_uuid):
-    """Task 2a: Generate a histogram of countries of the viewers."""
+    
+    #load data from JSON file
     df = load_data(file_name)
     if df is not None:
-        country_histogram(df, doc_uuid)  # Pass the required doc_uuid
+        country_histogram(df, doc_uuid)  # plotting using filtered data
     else:
         print("Failed to load data for Task 2a.")
 
 
-
+# plotting histogram of continents of the viewers 
 def run_task_2b(file_name, doc_uuid):
-    """Task 2b: Generate a histogram of continents of the viewers."""
+    
     df = load_data(file_name)
     if df is not None:
         print("Data Loaded Successfully! ")
         try:
-            # Now we can directly use the continent_mapping imported from gui.py
+            #  directly use the filtered data and continent mapping
             continent_histogram(df, doc_uuid, continent_mapping)
             print("Continent histogram generated successfully.")
         except Exception as e:
@@ -32,10 +33,9 @@ def run_task_2b(file_name, doc_uuid):
     else:
         print("Failed to load data for Task 2b.")
 
+# plotting histogram of browser names along with OS details  
 def run_task_3a(file_name):
-    """
-    Task 3a: Display a histogram of browser names with descriptions (OS details).
-    """
+    
     df = load_data(file_name)
     
     df = load_data(file_name)
@@ -43,19 +43,18 @@ def run_task_3a(file_name):
         detailed_browser_histogram(df)
     else:
         print("Failed to load data for Task 3a.")
-
+#plotting a histogram of main  browser names 
 def run_task_3b(file_name):
-    """
-    Task 3b: Display a histogram of all browser identifiers of the viewers.
-    """
+   
     df = load_data(file_name)
     if df is not None:
         browser_histogram(df)
     else:
         print("Failed to load data for Task 3b.")
 
+#Top 10 readers
 def run_task_4(file_name):
-    """Task 4: Analyze and return the top 10 readers."""
+    
     df = load_data(file_name)
     if df is not None:
         print("Data Loaded Successfully! ")
@@ -67,20 +66,20 @@ def run_task_4(file_name):
     else:
         print("Failed to load data for Task 4.")
 
-
+#printing Also likes list
 def run_task_5d(file_name, doc_uuid):
-    """Task 5d: Generate 'Also Likes' list."""
+   
     df = load_data(file_name)
     if df is not None:
         print("Data Loaded Successfully! ")
-        liked_docs = also_likes(df, doc_uuid)
+        liked_docs = also_likes(df, doc_uuid)   #get the top 10 liked documents
         print("Top 10 Also like\n")
         for doc in liked_docs:
             print(doc)
     else:
         print("Failed to load data for Task 5d.")
 
-
+#generating also like graph
 def run_task_6( file_name,doc_uuid,visitor_uuid=None):
     """Task 6: Generate 'Also Likes' graph."""
     df = load_data(file_name)
@@ -89,14 +88,15 @@ def run_task_6( file_name,doc_uuid,visitor_uuid=None):
     else:
         print("Failed to load data for Task 6.")
 
-
+#running task 6 and launching GUI
 def run_task_7():
-    """Task 7: Run Task 6 and launch the GUI."""
+    
     print("Launching the GUI...")
-    app = Application()
+    app = Application() #create GUI application instance
     app.mainloop()
 
 def main():
+    # argument parsing for command-line input
     parser = argparse.ArgumentParser(description="Command-line tool for testing tasks")
     parser.add_argument('-u', '--user_uuid', help="User UUID (not required for all tasks)")
     parser.add_argument('-d', '--doc_uuid', help="Document UUID (required for some tasks)")
@@ -114,7 +114,7 @@ def main():
             print("Error: Task 2a requires a Document UUID.")
     elif args.task_id == '2b':
         if args.doc_uuid:
-            run_task_2b(args.file_name, args.doc_uuid)  # Pass doc_uuid to run_task_2b
+            run_task_2b(args.file_name, args.doc_uuid) 
         else:
             print("Error: Task 2b requires a Document UUID.")
     elif args.task_id == '3a':
@@ -138,6 +138,6 @@ def main():
     else:
         print(f"Invalid task ID: {args.task_id}")
 
-
+#calling main function to start program
 if __name__ == "__main__":
     main()
