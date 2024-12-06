@@ -1,11 +1,10 @@
 import tkinter as tk
 from tkinter import ttk
-import matplotlib.pyplot as plt
 from tkinter import messagebox, filedialog
 from also_likes import also_likes_graph, also_likes
-from data_analysis import load_data
-from reader_analysis import analyze_top_readers
-from visualization import country_histogram, continent_histogram, browser_histogram, detailed_browser_histogram
+from data_processing import load_data
+from top_readers import analyze_top_readers
+from display_histogram import country_histogram, continent_histogram, browser_histogram, detailed_browser_histogram
 
 continent_mapping = {
     # North America

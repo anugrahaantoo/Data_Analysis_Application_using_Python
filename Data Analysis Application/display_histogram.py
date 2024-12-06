@@ -1,5 +1,5 @@
 import matplotlib.pyplot as plt
-from data_analysis import extract_browser_name, extract_detailed_browser_name
+from data_processing import extract_browser_name, extract_detailed_browser_name
 
 def country_histogram(df, doc_uuid):
     filtered_data = df[df['subject_doc_id'] == doc_uuid]

@@ -1,8 +1,8 @@
 import argparse
 import matplotlib.pyplot as plt
-from data_analysis import load_data
-from reader_analysis import analyze_top_readers
-from visualization import country_histogram, continent_histogram, detailed_browser_histogram, browser_histogram 
+from data_processing import load_data
+from top_readers import analyze_top_readers
+from display_histogram import country_histogram, continent_histogram, detailed_browser_histogram, browser_histogram 
 from also_likes import also_likes_graph, also_likes
 from gui import Application
 from gui import continent_mapping 
