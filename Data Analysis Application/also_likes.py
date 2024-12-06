@@ -1,5 +1,7 @@
 from graphviz import Digraph
 import pandas as pd
+import matplotlib.pyplot as plt
+from PIL import Image
 
 def get_readers_of_document(data, doc_uuid):
     """
@@ -69,7 +71,7 @@ def generate_also_likes_graph(df, doc_uuid, visitor_uuid=None):
             all_relationships.append((str(reader)[-4:], str(doc)[-4:]))
 
     # Create the Graphviz Digraph
-    graph = Digraph(format='pdf')
+    graph = Digraph(format='png')  # Use PNG for easy plotting
     graph.attr(ranksep='.75', ratio='compress', size='15,22', orientation='landscape', rotate='180')
 
     # Highlight the input document
@@ -102,10 +104,15 @@ def generate_also_likes_graph(df, doc_uuid, visitor_uuid=None):
         for _, doc in all_relationships:
             documents_rank.node(doc)
 
-    # Render the graph to both .ps and .pdf formats
+    # Save the graph as PNG for display
     output_base_path = f"also_likes_{str(doc_uuid)[-4:]}"
-    ps_output_path = graph.render(output_base_path, format='ps')  # PostScript
-    pdf_output_path = graph.render(output_base_path, format='pdf')  # PDF
+    png_output_path = graph.render(output_base_path, format='png')  # Save as PNG
 
-    print(f"Graph generated as PostScript: {ps_output_path}")
-    print(f"Graph generated as PDF: {pdf_output_path}")
+    # Display the graph as a plot
+    img = Image.open(png_output_path)
+    plt.figure(figsize=(12, 8))
+    plt.imshow(img)
+    plt.axis('off')
+    plt.show()
+
+    print(f"Graph generated and displayed as PNG: {png_output_path}")

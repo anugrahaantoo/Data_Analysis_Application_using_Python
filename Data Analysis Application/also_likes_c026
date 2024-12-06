@@ -3,6 +3,8 @@ digraph {
 	c026 [label=c026 color=".3 .9 .7" shape=circle style=filled]
 	"3d35" [label="3d35" shape=box]
 	"05a1" [label="05a1" shape=box]
+	c199 [label=c199 shape=box]
+	f2da [label=f2da shape=box]
 	"3d35" -> c026
 	"88ff" [label="88ff" shape=circle]
 	"3d35" -> "88ff"
@@ -20,6 +22,30 @@ digraph {
 	"3d35" -> "8a62"
 	6287 [label=6287 shape=circle]
 	"3d35" -> 6287
+	bee8 [label=bee8 shape=circle]
+	"3d35" -> bee8
+	f83d [label=f83d shape=circle]
+	"3d35" -> f83d
+	8945 [label=8945 shape=circle]
+	"3d35" -> 8945
+	8467 [label=8467 shape=circle]
+	"3d35" -> 8467
+	"7ad8" [label="7ad8" shape=circle]
+	"3d35" -> "7ad8"
+	"6ae1" [label="6ae1" shape=circle]
+	"3d35" -> "6ae1"
+	"83f4" [label="83f4" shape=circle]
+	"3d35" -> "83f4"
+	"8dde" [label="8dde" shape=circle]
+	"3d35" -> "8dde"
+	e2ea [label=e2ea shape=circle]
+	"3d35" -> e2ea
+	c14b [label=c14b shape=circle]
+	"3d35" -> c14b
+	nan [label=nan shape=circle]
+	"3d35" -> nan
+	eb4b [label=eb4b shape=circle]
+	"3d35" -> eb4b
 	e939 [label=e939 shape=circle]
 	"05a1" -> e939
 	eb4b [label=eb4b shape=circle]
@@ -29,11 +55,35 @@ digraph {
 	"05a1" -> c026
 	"83f4" [label="83f4" shape=circle]
 	"05a1" -> "83f4"
+	4663 [label=4663 shape=circle]
+	c199 -> 4663
+	"1b42" [label="1b42" shape=circle]
+	c199 -> "1b42"
+	eb4b [label=eb4b shape=circle]
+	c199 -> eb4b
+	"9b25" [label="9b25" shape=circle]
+	c199 -> "9b25"
+	c199 -> c026
+	"83f4" [label="83f4" shape=circle]
+	c199 -> "83f4"
+	3291 [label=3291 shape=circle]
+	c199 -> 3291
+	"83bb" [label="83bb" shape=circle]
+	f2da -> "83bb"
+	eb4b [label=eb4b shape=circle]
+	f2da -> eb4b
+	"9b25" [label="9b25" shape=circle]
+	f2da -> "9b25"
+	f2da -> c026
+	"83f4" [label="83f4" shape=circle]
+	f2da -> "83f4"
 	{
 		rank=same
 		Readers
 		"3d35"
 		"05a1"
+		c199
+		f2da
 	}
 	{
 		rank=same
@@ -47,7 +97,31 @@ digraph {
 		"86f9"
 		"8a62"
 		6287
+		bee8
+		f83d
+		8945
+		8467
+		"7ad8"
+		"6ae1"
+		"83f4"
+		"8dde"
+		e2ea
+		c14b
+		nan
+		eb4b
 		e939
+		eb4b
+		"9b25"
+		c026
+		"83f4"
+		4663
+		"1b42"
+		eb4b
+		"9b25"
+		c026
+		"83f4"
+		3291
+		"83bb"
 		eb4b
 		"9b25"
 		c026
