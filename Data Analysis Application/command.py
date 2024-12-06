@@ -1,12 +1,11 @@
 import argparse
-import matplotlib.pyplot as plt
-from data_analysis import load_data,extract_detailed_browser_name
+from data_analysis import load_data
 from reader_analysis import analyze_top_readers
-from visualization import generate_country_histogram, generate_continent_histogram, generate_main_browser_histogram
+from visualization import generate_country_histogram, generate_continent_histogram, generate_detailed_browser_histogram, generate_browser_histogram 
 from also_likes import generate_also_likes_graph, also_likes
 from gui import Application
 from gui import continent_mapping 
-from data_analysis import extract_browser_name
+
 
 def run_task_2a(file_name, doc_uuid):
     """Task 2a: Generate a histogram of countries of the viewers."""
@@ -31,23 +30,16 @@ def run_task_2b(file_name, doc_uuid):
             print(f"Error generating continent histogram: {e}")
     else:
         print("Failed to load data for Task 2b.")
+
 def run_task_3a(file_name):
     """
     Task 3a: Display a histogram of browser names with descriptions (OS details).
     """
     df = load_data(file_name)
     
+    df = load_data(file_name)
     if df is not None:
-        print("Data Loaded Successfully! ")
-        df['detailed_browser'] = df['visitor_useragent'].apply(extract_detailed_browser_name)
-        browser_counts = df['detailed_browser'].value_counts()
-        print("Detailed Browser Histogram (Task 3a):")
-        print(browser_counts)
-        browser_counts.plot(kind='bar', figsize=(12, 6))
-        plt.title('Histogram of Detailed Browser Names')
-        plt.xlabel('Browser Name (with OS)')
-        plt.ylabel('Number of Viewers')
-        plt.show()
+        generate_detailed_browser_histogram(df)
     else:
         print("Failed to load data for Task 3a.")
 
@@ -57,21 +49,9 @@ def run_task_3b(file_name):
     """
     df = load_data(file_name)
     if df is not None:
-        print("Data Loaded Successfully! ")
-        df['main_browser'] = df['visitor_useragent'].apply(extract_browser_name)
-        browser_counts = df['main_browser'].value_counts()
-        print("Browser Histogram (Task 3b):")
-        print(browser_counts)
-        browser_counts.plot(kind='bar', figsize=(12, 6))
-        plt.title('Histogram of Browser Names')
-        plt.xlabel('Browser Name')
-        plt.ylabel('Number of Viewers')
-        plt.show()
+        generate_browser_histogram(df)
     else:
         print("Failed to load data for Task 3b.")
-
-
-
 
 def run_task_4(file_name):
     """Task 4: Analyze and return the top 10 readers."""
