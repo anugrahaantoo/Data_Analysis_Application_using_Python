@@ -15,14 +15,21 @@ def run_task_2a(file_name, doc_uuid):
         print("Failed to load data for Task 2a.")
 
 
-def run_task_2b(file_name):
+
+def run_task_2b(file_name, doc_uuid):
     """Task 2b: Generate a histogram of continents of the viewers."""
     df = load_data(file_name)
     if df is not None:
-        generate_continent_histogram(df)
+        # Use the continent mapping from the GUI
+        app = Application()  # Create an instance of the Application class
+        continent_mapping = app.generate_continent_histogram.__defaults__[1]  # Extract mapping from GUI
+        try:
+            generate_continent_histogram(df, doc_uuid, continent_mapping)
+            print("Continent histogram generated successfully.")
+        except Exception as e:
+            print(f"Error generating continent histogram: {e}")
     else:
         print("Failed to load data for Task 2b.")
-
 
 def run_task_3a(file_name):
     """Task 3a: Display a histogram of all browser identifiers of the viewers."""
@@ -96,7 +103,10 @@ def main():
         else:
             print("Error: Task 2a requires a Document UUID.")
     elif args.task_id == '2b':
-        run_task_2b(args.file_name)
+        if args.doc_uuid:
+            run_task_2b(args.file_name, args.doc_uuid)  # Pass doc_uuid to run_task_2b
+        else:
+            print("Error: Task 2b requires a Document UUID.")
     elif args.task_id == '3a':
         run_task_3a(args.file_name)
     elif args.task_id == '3b':

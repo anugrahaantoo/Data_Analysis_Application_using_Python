@@ -6,6 +6,18 @@ from data_analysis import load_data
 from reader_analysis import analyze_top_readers
 from visualization import generate_country_histogram, generate_continent_histogram, generate_main_browser_histogram
 
+continent_mapping = {
+            "US": "North America", "CA": "North America", "MX": "North America",
+            "BR": "South America", "AR": "South America", "CL": "South America", "CO": "South America", "PE": "South America",
+            "DE": "Europe", "FR": "Europe", "IT": "Europe", "ES": "Europe", "GB": "Europe", "RU": "Europe",
+            "PL": "Europe", "SE": "Europe", "NL": "Europe", "BE": "Europe", "AT": "Europe", "CH": "Europe",
+            "IN": "Asia", "CN": "Asia", "JP": "Asia", "KR": "Asia", "SG": "Asia", "MY": "Asia", "ID": "Asia",
+            "TH": "Asia", "PH": "Asia", "VN": "Asia", "PK": "Asia", "BD": "Asia", "IR": "Asia", "IQ": "Asia", "SA": "Asia",
+            "ZA": "Africa", "EG": "Africa", "NG": "Africa", "KE": "Africa", "GH": "Africa", "DZ": "Africa",
+            "MA": "Africa", "TZ": "Africa", "UG": "Africa", "SN": "Africa", "MW": "Africa", "ZM": "Africa", "MZ": "Africa",
+            "AU": "Oceania", "NZ": "Oceania", "FJ": "Oceania", "PG": "Oceania", "WS": "Oceania"
+        }
+
 class Application(tk.Tk):
     def __init__(self):
         super().__init__()
@@ -120,17 +132,7 @@ class Application(tk.Tk):
 
     def generate_continent_histogram(self):
         doc_uuid = self.doc_uuid_entry.get()
-        continent_mapping = {
-            "US": "North America", "CA": "North America", "MX": "North America",
-            "BR": "South America", "AR": "South America", "CL": "South America", "CO": "South America", "PE": "South America",
-            "DE": "Europe", "FR": "Europe", "IT": "Europe", "ES": "Europe", "GB": "Europe", "RU": "Europe",
-            "PL": "Europe", "SE": "Europe", "NL": "Europe", "BE": "Europe", "AT": "Europe", "CH": "Europe",
-            "IN": "Asia", "CN": "Asia", "JP": "Asia", "KR": "Asia", "SG": "Asia", "MY": "Asia", "ID": "Asia",
-            "TH": "Asia", "PH": "Asia", "VN": "Asia", "PK": "Asia", "BD": "Asia", "IR": "Asia", "IQ": "Asia", "SA": "Asia",
-            "ZA": "Africa", "EG": "Africa", "NG": "Africa", "KE": "Africa", "GH": "Africa", "DZ": "Africa",
-            "MA": "Africa", "TZ": "Africa", "UG": "Africa", "SN": "Africa", "MW": "Africa", "ZM": "Africa", "MZ": "Africa",
-            "AU": "Oceania", "NZ": "Oceania", "FJ": "Oceania", "PG": "Oceania", "WS": "Oceania"
-        }
+       
         if hasattr(self, 'df'):
             generate_continent_histogram(self.df, doc_uuid, continent_mapping)
         else:
