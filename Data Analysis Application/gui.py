@@ -3,9 +3,9 @@ from tkinter import ttk
 import matplotlib.pyplot as plt
 from tkinter import messagebox, filedialog
 from also_likes import generate_also_likes_graph, also_likes
-from data_analysis import load_data, extract_browser_name,extract_detailed_browser_name
+from data_analysis import load_data
 from reader_analysis import analyze_top_readers
-from visualization import generate_country_histogram, generate_continent_histogram, generate_main_browser_histogram
+from visualization import generate_country_histogram, generate_continent_histogram, generate_browser_histogram, generate_detailed_browser_histogram
 
 continent_mapping = {
     # North America
@@ -59,8 +59,6 @@ continent_mapping = {
     "AQ": "Antarctica"
 }
 
-
-
 class Application(tk.Tk):
     def __init__(self):
         super().__init__()
@@ -98,14 +96,17 @@ class Application(tk.Tk):
         button_width = 30  # Adjust this value as needed
 
         # Buttons for generating reports, using grid layout
+        self.generate_detailed_browser_button = tk.Button(self, text="Generate Detailed Browser Histogram ", command=self.generate_detailed_browser_histogram, width=button_width)
+        self.generate_detailed_browser_button.grid(row=5, column=1, pady=5)
+
         self.generate_browser_button = tk.Button(self, text="Generate Browser Histogram", command=self.generate_browser_histogram, width=button_width)
-        self.generate_browser_button.grid(row=5, column=1, pady=5)
+        self.generate_browser_button.grid(row=6, column=1, pady=5)
 
         self.generate_country_button = tk.Button(self, text="Generate Country Histogram", command=self.generate_country_histogram, width=button_width)
-        self.generate_country_button.grid(row=6, column=1, pady=5)
+        self.generate_country_button.grid(row=7, column=1, pady=5)
 
         self.generate_continent_button = tk.Button(self, text="Generate Continent Histogram", command=self.generate_continent_histogram, width=button_width)
-        self.generate_continent_button.grid(row=7, column=1, pady=5)
+        self.generate_continent_button.grid(row=8, column=1, pady=5)
 
         self.generate_top10_button = tk.Button(self, text="Top 10 Readers", command=self.generate_analyze_top_readers, width=button_width)
         self.generate_top10_button.grid(row=4, column=2, pady=5)
@@ -114,7 +115,7 @@ class Application(tk.Tk):
         self.generate_also_likes_button.grid(row=4, column=3, pady=5)
 
         self.generate_also_likes_graph_button = tk.Button(self, text="Generate 'Also Likes' Graph", command=self.generate_also_likes_graph, width=button_width)
-        self.generate_also_likes_graph_button.grid(row=8, column=1, pady=5)
+        self.generate_also_likes_graph_button.grid(row=9, column=1, pady=5)
 
         # Top Readers Frame with Table
         self.top_readers_frame = tk.Frame(self)
@@ -166,44 +167,25 @@ class Application(tk.Tk):
         else:
             messagebox.showerror("Error", "The file is empty or invalid.")
     
-
-    def generate_browser_histogram(self):
-    
-        if hasattr(self, 'df'):
-            # Extract main browser names
-            self.df['main_browser'] = self.df['visitor_useragent'].apply(extract_browser_name)
-            browser_counts = self.df['main_browser'].value_counts()
-
-            # Plot the histogram
-            browser_counts.plot(kind='bar', figsize=(12, 6))
-            plt.title('Histogram of Browser Names')
-            plt.xlabel('Browser Name')
-            plt.ylabel('Number of Viewers')
-            plt.show()
-        else:
-            messagebox.showerror("Error", "Data not loaded yet.")
-
     def generate_detailed_browser_histogram(self):
-        """
-        Task 3a: Generates a histogram for detailed browser names (e.g., Mozilla (Windows NT 6.1)).
-        """
+        
         if hasattr(self, 'df'):
-            # Extract detailed browser names
-            self.df['detailed_browser'] = self.df['visitor_useragent'].apply(extract_detailed_browser_name)
-            browser_counts = self.df['detailed_browser'].value_counts()
-
-            # Plot the histogram
-            browser_counts.plot(kind='bar', figsize=(12, 6))
-            plt.title('Histogram of Detailed Browser Names')
-            plt.xlabel('Browser Name (with OS)')
-            plt.ylabel('Number of Viewers')
-            plt.show()
+            generate_detailed_browser_histogram(self.df)
         else:
             messagebox.showerror("Error", "Data not loaded yet.")
-
+   
+    def generate_browser_histogram(self):
+        
+        if hasattr(self, 'df'):
+            generate_browser_histogram(self.df)
+        else:
+            messagebox.showerror("Error", "Data not loaded yet.")
 
     def generate_country_histogram(self):
         doc_uuid = self.doc_uuid_entry.get()
+        if not doc_uuid:
+            messagebox.showerror("Error", "Please enter a Document UUID.")
+            return
         if hasattr(self, 'df'):
             generate_country_histogram(self.df, doc_uuid)
         else:
@@ -211,7 +193,9 @@ class Application(tk.Tk):
 
     def generate_continent_histogram(self):
         doc_uuid = self.doc_uuid_entry.get()
-       
+        if not doc_uuid:
+            messagebox.showerror("Error", "Please enter a Document UUID.")
+            return
         if hasattr(self, 'df'):
             generate_continent_histogram(self.df, doc_uuid, continent_mapping)
         else:

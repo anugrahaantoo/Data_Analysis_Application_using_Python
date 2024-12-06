@@ -1,5 +1,5 @@
 import matplotlib.pyplot as plt
-from data_analysis import extract_browser_name
+from data_analysis import extract_browser_name, extract_detailed_browser_name
 
 def generate_country_histogram(df, doc_uuid):
     filtered_data = df[df['subject_doc_id'] == doc_uuid]
@@ -22,7 +22,7 @@ def generate_continent_histogram(df, doc_uuid, continent_mapping):
     plt.tight_layout()  # Adjust layout to prevent clipping
     plt.show()
 
-def generate_main_browser_histogram(df):
+def generate_browser_histogram(df):
     df['main_browser'] = df['visitor_useragent'].apply(lambda x: extract_browser_name(x))
     browser_counts = df['main_browser'].value_counts()
     plt.figure(figsize=(7, 4))  # Set dimensions to 10x6 inches
@@ -31,3 +31,15 @@ def generate_main_browser_histogram(df):
     plt.ylabel("Number of Views")
     plt.tight_layout()  # Adjust layout to prevent clipping
     plt.show()
+
+def generate_detailed_browser_histogram(df):
+    
+    # Extract detailed browser names
+    df['detailed_browser'] = df['visitor_useragent'].apply(extract_detailed_browser_name)
+    browser_counts = df['detailed_browser'].value_counts()
+    browser_counts.plot(kind='bar', figsize=(12, 6))
+    plt.title('Histogram of Detailed Browser Names')
+    plt.xlabel('Browser Name (with OS)')
+    plt.ylabel('Number of Viewers')
+    plt.show()
+
