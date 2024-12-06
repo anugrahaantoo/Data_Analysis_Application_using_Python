@@ -19,14 +19,8 @@ def load_data(file_path):
         
         # Compute the Dask DataFrame into a Pandas DataFrame
         df = df.compute()  # Converts Dask dataframe to a Pandas DataFrame
-
-        # Check if the dataframe is not empty
-        if df is not None and not df.empty:
-            messagebox.showinfo("Success", "Data Loaded Successfully")
-            return df
-        else:
-            messagebox.showerror("Error", "The file is empty or invalid.")
-    
+        return df
+        
     except FileNotFoundError:
         messagebox.showerror("Error", f"File not found at {file_path}")
     except json.JSONDecodeError as e:
@@ -53,16 +47,14 @@ def extract_browser_name(useragent):
             return browser_name
     return "Unknown"
 
-# Function to generate the "Also Likes" list
-def also_likes(df, doc_uuid):
-    readers = df[df['subject_doc_id'] == doc_uuid]['visitor_uuid'].unique()
-    if not readers.size:
-        return []
-    all_docs = []
-    for reader in readers:
-        all_docs.extend(df[df['visitor_uuid'] == reader]['subject_doc_id'].unique())
-    doc_counts = pd.Series(all_docs).value_counts()
-    if doc_uuid in doc_counts.index:
-        doc_counts = doc_counts.drop(doc_uuid)
-    return doc_counts.head(10).index.tolist()
+def extract_detailed_browser_name(useragent):
+    """
+    Extracts the main browser name along with OS information from the user-agent string.
+    """
+    browser_name = extract_browser_name(useragent)
+    # Extract OS details within parentheses
+    os_match = re.search(r"\(([^)]+)\)", useragent)
+    os_info = os_match.group(1) if os_match else "Unknown OS"
+    return f"{browser_name} ({os_info})"
+
 

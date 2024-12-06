@@ -1,8 +1,9 @@
 import argparse
-from data_analysis import load_data, also_likes
+import matplotlib.pyplot as plt
+from data_analysis import load_data,extract_detailed_browser_name
 from reader_analysis import analyze_top_readers
 from visualization import generate_country_histogram, generate_continent_histogram, generate_main_browser_histogram
-from also_likes import generate_also_likes_graph
+from also_likes import generate_also_likes_graph, also_likes
 from gui import Application
 from gui import continent_mapping 
 from data_analysis import extract_browser_name
@@ -21,6 +22,7 @@ def run_task_2b(file_name, doc_uuid):
     """Task 2b: Generate a histogram of continents of the viewers."""
     df = load_data(file_name)
     if df is not None:
+        print("Data Loaded Successfully! ")
         try:
             # Now we can directly use the continent_mapping imported from gui.py
             generate_continent_histogram(df, doc_uuid, continent_mapping)
@@ -29,42 +31,55 @@ def run_task_2b(file_name, doc_uuid):
             print(f"Error generating continent histogram: {e}")
     else:
         print("Failed to load data for Task 2b.")
-
 def run_task_3a(file_name):
-    """Task 3a: Display a histogram of all browser identifiers of the viewers."""
+    """
+    Task 3a: Display a histogram of browser names with descriptions (OS details).
+    """
     df = load_data(file_name)
+    
     if df is not None:
-        generate_main_browser_histogram(df)
+        print("Data Loaded Successfully! ")
+        df['detailed_browser'] = df['visitor_useragent'].apply(extract_detailed_browser_name)
+        browser_counts = df['detailed_browser'].value_counts()
+        print("Detailed Browser Histogram (Task 3a):")
+        print(browser_counts)
+        browser_counts.plot(kind='bar', figsize=(12, 6))
+        plt.title('Histogram of Detailed Browser Names')
+        plt.xlabel('Browser Name (with OS)')
+        plt.ylabel('Number of Viewers')
+        plt.show()
     else:
         print("Failed to load data for Task 3a.")
 
-
 def run_task_3b(file_name):
-    """Task 3b: Process and display browser identifiers."""
+    """
+    Task 3b: Display a histogram of all browser identifiers of the viewers.
+    """
     df = load_data(file_name)
     if df is not None:
-        # Print the columns of the DataFrame for debugging
-        print("Columns in the DataFrame:", df.columns)
-
-        # Check if the 'browser_id' column exists before trying to use it
-        if 'browser_id' in df.columns:
-            df['main_browser'] = df['browser_id'].apply(lambda x: extract_browser_name(x))
-            print(df[['browser_id', 'main_browser']])
-        elif 'user_agent' in df.columns:
-            # If 'browser_id' is not found, use 'user_agent' column instead
-            df['main_browser'] = df['user_agent'].apply(lambda x: extract_browser_name(x))
-            print(df[['user_agent', 'main_browser']])
-        else:
-            print("Error: Neither 'browser_id' nor 'user_agent' columns found. Please check the data.")
+        print("Data Loaded Successfully! ")
+        df['main_browser'] = df['visitor_useragent'].apply(extract_browser_name)
+        browser_counts = df['main_browser'].value_counts()
+        print("Browser Histogram (Task 3b):")
+        print(browser_counts)
+        browser_counts.plot(kind='bar', figsize=(12, 6))
+        plt.title('Histogram of Browser Names')
+        plt.xlabel('Browser Name')
+        plt.ylabel('Number of Viewers')
+        plt.show()
     else:
-        print("Failed to load data.")
+        print("Failed to load data for Task 3b.")
+
+
 
 
 def run_task_4(file_name):
     """Task 4: Analyze and return the top 10 readers."""
     df = load_data(file_name)
     if df is not None:
+        print("Data Loaded Successfully! ")
         top_readers = analyze_top_readers(df)
+        
         print("Top 10 Readers:")
         for reader in top_readers:
             print(reader)
@@ -72,26 +87,29 @@ def run_task_4(file_name):
         print("Failed to load data for Task 4.")
 
 
-def run_task_5(doc_uuid, file_name):
-    """Task 5: Generate 'Also Likes' list."""
+def run_task_5d(doc_uuid, file_name):
+    """Task 5d: Generate 'Also Likes' list."""
     df = load_data(file_name)
     if df is not None:
+        print("Data Loaded Successfully! ")
         liked_docs = also_likes(df, doc_uuid)
-        print(f"Also Likes for document:\n {doc_uuid}: {liked_docs}\n")
+        print("Top 10 Also like\n")
+        for doc in liked_docs:
+            print(doc)
     else:
-        print("Failed to load data for Task 5.")
+        print("Failed to load data for Task 5d.")
 
 
-def run_task_6(doc_uuid, file_name):
+def run_task_6( file_name,doc_uuid,visitor_uuid=None):
     """Task 6: Generate 'Also Likes' graph."""
     df = load_data(file_name)
     if df is not None:
-        generate_also_likes_graph(df, doc_uuid)
+        generate_also_likes_graph(df, doc_uuid,visitor_uuid)
     else:
         print("Failed to load data for Task 6.")
 
 
-def run_task_7(file_name):
+def run_task_7():
     """Task 7: Run Task 6 and launch the GUI."""
     print("Launching the GUI...")
     app = Application()
@@ -101,6 +119,7 @@ def main():
     parser = argparse.ArgumentParser(description="Command-line tool for testing tasks")
     parser.add_argument('-u', '--user_uuid', help="User UUID (not required for all tasks)")
     parser.add_argument('-d', '--doc_uuid', help="Document UUID (required for some tasks)")
+    parser.add_argument('-v', '--visitor_uuid', help="Visitor UUID (required for some tasks)")
     parser.add_argument('-t', '--task_id', required=True, help="Task ID")
     parser.add_argument('-f', '--file_name', required=True, help="Input JSON file")
 
@@ -123,18 +142,18 @@ def main():
         run_task_3b(args.file_name)
     elif args.task_id == '4':
         run_task_4(args.file_name)
-    elif args.task_id == '5':
+    elif args.task_id == '5d':
         if args.doc_uuid:
-            run_task_5(args.doc_uuid, args.file_name)
+            run_task_5d( args.file_name,args.doc_uuid)
         else:
             print("Error: Task 5 requires a Document UUID.")
     elif args.task_id == '6':
         if args.doc_uuid:
-            run_task_6(args.doc_uuid, args.file_name)
+            run_task_6( args.file_name, args.doc_uuid,args.visitor_uuid)
         else:
             print("Error: Task 6 requires a Document UUID.")
     elif args.task_id == '7':
-        run_task_7(args.file_name)
+        run_task_7()
     else:
         print(f"Invalid task ID: {args.task_id}")
 
