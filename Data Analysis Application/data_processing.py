@@ -3,32 +3,38 @@ import json
 import pandas as pd
 import re
 import dask.dataframe as dd
-
+import gzip
 from tkinter import messagebox
 
 # Function to load data from a JSON file into a Pandas DataFrame
-def load_data(file_path):
-    try:
-        # Check if the file is compressed (ends with .gz)
-        if file_path.endswith('.gz'):
-            # Use Dask for large compressed JSON files
-            df = dd.read_json(file_path, compression='gzip')
-        else:
-            # Use Dask for large uncompressed JSON files
-            df = dd.read_json(file_path)
-        
-        # Compute the Dask DataFrame into a Pandas DataFrame
-        df = df.compute()  # Converts Dask dataframe to a Pandas DataFrame
-        return df
-        
-    except FileNotFoundError:
-        messagebox.showerror("Error", f"File not found at {file_path}")
-    except json.JSONDecodeError as e:
-        messagebox.showerror("Error", f"JSON decoding error: {e}")
-    except Exception as e:
-        messagebox.showerror("Error", f"An error occurred while loading the data: {e}")
 
-    return None
+def load_data(file_path):
+    """
+    Load data from a JSON or JSON.gz file and return a Pandas DataFrame.
+    Supports large files by leveraging Dask for computation.
+    :param file_path: Path to the JSON or JSON.gz file.
+    :return: A Pandas DataFrame containing the data.
+    """
+    try:
+        # Check if the file is compressed
+        if file_path.endswith('.gz'):
+            with gzip.open(file_path, 'rt', encoding='utf-8') as file:
+                data = (json.loads(line) for line in file)
+                df = pd.DataFrame(data)  # Convert generator to DataFrame
+        else:
+            dask_df = dd.read_json(file_path, lines=True)
+            df = dask_df.compute()  # Convert Dask DataFrame to Pandas DataFrame
+        
+        return df
+
+    except FileNotFoundError:
+        print(f"Error: File not found at {file_path}")
+    except json.JSONDecodeError as e:
+        print(f"Error: JSON decoding error: {e}")
+    except Exception as e:
+        print(f"Error: {e}")
+        return None
+
 
 # Extract main browser name using regex
 def extract_browser_name(useragent):

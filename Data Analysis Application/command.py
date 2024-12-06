@@ -68,7 +68,7 @@ def run_task_4(file_name):
         print("Failed to load data for Task 4.")
 
 
-def run_task_5d(doc_uuid, file_name):
+def run_task_5d(file_name, doc_uuid):
     """Task 5d: Generate 'Also Likes' list."""
     df = load_data(file_name)
     if df is not None:
