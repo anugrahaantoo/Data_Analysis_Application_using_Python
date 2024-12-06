@@ -7,14 +7,7 @@ import gzip
 from tkinter import messagebox
 
 # Function to load data from a JSON file into a Pandas DataFrame
-
 def load_data(file_path):
-    """
-    Load data from a JSON or JSON.gz file and return a Pandas DataFrame.
-    Supports large files by leveraging Dask for computation.
-    :param file_path: Path to the JSON or JSON.gz file.
-    :return: A Pandas DataFrame containing the data.
-    """
     try:
         # Check if the file is compressed
         if file_path.endswith('.gz'):
@@ -24,7 +17,6 @@ def load_data(file_path):
         else:
             dask_df = dd.read_json(file_path, lines=True)
             df = dask_df.compute()  # Convert Dask DataFrame to Pandas DataFrame
-        
         return df
 
     except FileNotFoundError:
@@ -53,10 +45,8 @@ def extract_browser_name(useragent):
             return browser_name
     return "Unknown"
 
+#extract browser verbose info 
 def extract_detailed_browser_name(useragent):
-    """
-    Extracts the main browser name along with OS information from the user-agent string.
-    """
     browser_name = extract_browser_name(useragent)
     # Extract OS details within parentheses
     os_match = re.search(r"\(([^)]+)\)", useragent)

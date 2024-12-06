@@ -3,49 +3,35 @@ import pandas as pd
 import matplotlib.pyplot as plt
 from PIL import Image
 
+# method returns the visitor ids for the given doc id if the event_type is read
 def get_readers_of_document(data, doc_uuid):
-    """
-    Returns all visitor UUIDs who have read the given document.
-    :param data: DataFrame containing 'subject_doc_id' and 'visitor_uuid'.
-    :param doc_uuid: Document UUID for which readers are to be retrieved.
-    :return: List of visitor UUIDs.
-    """
+
     return data[(data['subject_doc_id'] == doc_uuid) & (data['event_type'] == 'read')]['visitor_uuid'].unique().tolist()
 
+#method returns the list of documents for a visitor id if the event type is read
 def get_documents_read_by_visitor(data, visitor_uuid):
-    """
-    Returns all document UUIDs read by a given visitor.
-    :param data: DataFrame containing 'subject_doc_id' and 'visitor_uuid'.
-    :param visitor_uuid: Visitor UUID for which documents are to be retrieved.
-    :return: List of document UUIDs.
-    """
+  
     return data[(data['visitor_uuid'] == visitor_uuid) & (data['event_type'] == 'read')]['subject_doc_id'].unique().tolist()
 
+#method to generate the also likes list
 def also_likes(data, doc_uuid, visitor_uuid=None):
-    """
-    Generate an 'also likes' list for the given document UUID.
-    :param data: DataFrame containing 'subject_doc_id' and 'visitor_uuid'.
-    :param doc_uuid: Document UUID to find 'also likes' for.
-    :param visitor_uuid: Optional visitor UUID to filter for specific visitor data.
-    :return: Sorted list of top 10 document UUIDs.
-    """
     # Get readers of the given document
-    readers = get_readers_of_document(data, doc_uuid)
+    doc_readers = get_readers_of_document(data, doc_uuid)
 
-    # Optionally filter readers for a specific visitor
-    if visitor_uuid and visitor_uuid not in readers:
-        readers.append(visitor_uuid)
+    # add the user entered visitor id if not present in the list
+    if visitor_uuid and visitor_uuid not in doc_readers:
+        doc_readers.append(visitor_uuid)
 
     # Get documents liked by these readers
     liked_docs = []
-    for reader in readers:
+    for reader in doc_readers:
         liked_docs.extend(get_documents_read_by_visitor(data, reader))
 
     # Exclude the original document from the list
     liked_docs = pd.Series(liked_docs)
     liked_docs = liked_docs[liked_docs != doc_uuid]
 
-    # Aggregate counts and apply sorting function
+    # take the count and apply sorting function
     doc_counts = liked_docs.value_counts()
     sorted_docs = sorting_function(doc_counts)
 
@@ -53,37 +39,22 @@ def also_likes(data, doc_uuid, visitor_uuid=None):
     return sorted_docs.head(10).index.tolist()
 
 
-
+#method that sorts the document counts in descending order
 def sorting_function(doc_counts):
-    """
-    Sorts the document counts in descending order.
-    
-    :param doc_counts: A pandas Series with document UUIDs as index and counts as values.
-    :returns: Sorted pandas Series in descending order.
-    """
+
     return doc_counts.sort_values(ascending=False)
 
-
+#method to generate the also likes graph
 def also_likes_graph(data, doc_uuid, visitor_uuid=None):
-    """
-    Generate a graph showing the input document, "also liked" documents read by its readers,
-    and only the readers of the input document. Highlight the input document and user, with arrows
-    capturing the "has-read" relationship. If no reader of the input document has read a "also liked"
-    document, it will be excluded.
-    
-    :param data: DataFrame containing 'subject_doc_id' and 'visitor_uuid'.
-    :param doc_uuid: Document UUID to create the graph for.
-    :param visitor_uuid: Optional visitor UUID to highlight in the graph.
-    """
-
+   
     # Readers of the input document
-    input_readers = get_readers_of_document(data, doc_uuid)
+    doc_readers = get_readers_of_document(data, doc_uuid)
 
-    # Ensure visitor_uuid is added to input_readers if provided
-    if visitor_uuid and visitor_uuid not in input_readers:
-        input_readers.append(visitor_uuid)
+    # Ensure visitor_uuid is added to doc_readers if provided
+    if visitor_uuid and visitor_uuid not in doc_readers:
+        doc_readers.append(visitor_uuid)
 
-    # Get "also liked" documents that are read by input readers
+    # call also_likes function and get the list of documents
     related_docs = also_likes(data, doc_uuid)
     filtered_docs = []  # Will store documents read by input document readers
     shared_readers = {}  # Readers for each filtered document
@@ -92,7 +63,7 @@ def also_likes_graph(data, doc_uuid, visitor_uuid=None):
         # Readers of this "also liked" document
         related_readers = get_readers_of_document(data, related_doc)
         # Filter to keep only those who also read the input document
-        common_readers = list(set(input_readers) & set(related_readers))
+        common_readers = list(set(doc_readers) & set(related_readers))
         if common_readers:
             filtered_docs.append(related_doc)
             shared_readers[related_doc] = common_readers
