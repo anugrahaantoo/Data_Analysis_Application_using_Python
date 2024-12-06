@@ -1,0 +1,56 @@
+digraph {
+	orientation=landscape ranksep=.75 ratio=compress rotate=180 size="15,22"
+	c026 [label=c026 color=".3 .9 .7" shape=circle style=filled]
+	"3d35" [label="3d35" shape=box]
+	"05a1" [label="05a1" shape=box]
+	"3d35" -> c026
+	"88ff" [label="88ff" shape=circle]
+	"3d35" -> "88ff"
+	"12b5" [label="12b5" shape=circle]
+	"3d35" -> "12b5"
+	"9d60" [label="9d60" shape=circle]
+	"3d35" -> "9d60"
+	e29a [label=e29a shape=circle]
+	"3d35" -> e29a
+	"280d" [label="280d" shape=circle]
+	"3d35" -> "280d"
+	"86f9" [label="86f9" shape=circle]
+	"3d35" -> "86f9"
+	"8a62" [label="8a62" shape=circle]
+	"3d35" -> "8a62"
+	6287 [label=6287 shape=circle]
+	"3d35" -> 6287
+	e939 [label=e939 shape=circle]
+	"05a1" -> e939
+	eb4b [label=eb4b shape=circle]
+	"05a1" -> eb4b
+	"9b25" [label="9b25" shape=circle]
+	"05a1" -> "9b25"
+	"05a1" -> c026
+	"83f4" [label="83f4" shape=circle]
+	"05a1" -> "83f4"
+	{
+		rank=same
+		Readers
+		"3d35"
+		"05a1"
+	}
+	{
+		rank=same
+		Documents
+		c026
+		"88ff"
+		"12b5"
+		"9d60"
+		e29a
+		"280d"
+		"86f9"
+		"8a62"
+		6287
+		e939
+		eb4b
+		"9b25"
+		c026
+		"83f4"
+	}
+}
