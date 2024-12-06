@@ -1,4 +1,5 @@
 from graphviz import Digraph
+import pandas as pd
 import matplotlib.pyplot as plt
 from PIL import Image
 
@@ -9,7 +10,7 @@ def get_readers_of_document(data, doc_uuid):
     :param doc_uuid: Document UUID for which readers are to be retrieved.
     :return: List of visitor UUIDs.
     """
-    return data[data['subject_doc_id'] == doc_uuid]['visitor_uuid'].unique().tolist()
+    return data[(data['subject_doc_id'] == doc_uuid) & (data['event_type'] == 'read')]['visitor_uuid'].unique().tolist()
 
 def get_documents_read_by_visitor(data, visitor_uuid):
     """
@@ -18,14 +19,13 @@ def get_documents_read_by_visitor(data, visitor_uuid):
     :param visitor_uuid: Visitor UUID for which documents are to be retrieved.
     :return: List of document UUIDs.
     """
-    return data[data['visitor_uuid'] == visitor_uuid]['subject_doc_id'].unique().tolist()
+    return data[(data['visitor_uuid'] == visitor_uuid) & (data['event_type'] == 'read')]['subject_doc_id'].unique().tolist()
 
 def also_likes(data, doc_uuid, visitor_uuid=None):
     """
     Generate an 'also likes' list for the given document UUID.
     :param data: DataFrame containing 'subject_doc_id' and 'visitor_uuid'.
     :param doc_uuid: Document UUID to find 'also likes' for.
-    :param sorting_function: Function to sort the results.
     :param visitor_uuid: Optional visitor UUID to filter for specific visitor data.
     :return: Sorted list of top 10 document UUIDs.
     """
@@ -37,17 +37,31 @@ def also_likes(data, doc_uuid, visitor_uuid=None):
         readers.append(visitor_uuid)
 
     # Get documents liked by these readers
-    liked_docs = data[data['visitor_uuid'].isin(readers)]['subject_doc_id']
+    liked_docs = []
+    for reader in readers:
+        liked_docs.extend(get_documents_read_by_visitor(data, reader))
 
     # Exclude the original document from the list
+    liked_docs = pd.Series(liked_docs)
     liked_docs = liked_docs[liked_docs != doc_uuid]
 
     # Aggregate counts and apply sorting function
     doc_counts = liked_docs.value_counts()
-    #sorted_docs = sorting_function(doc_counts)
+    sorted_docs = sorting_function(doc_counts)
 
     # Return the top 10 document UUIDs
-    return doc_counts.head(10).index.tolist()
+    return sorted_docs.head(10).index.tolist()
+
+
+
+def sorting_function(doc_counts):
+    """
+    Sorts the document counts in descending order.
+    
+    :param doc_counts: A pandas Series with document UUIDs as index and counts as values.
+    :returns: Sorted pandas Series in descending order.
+    """
+    return doc_counts.sort_values(ascending=False)
 
 
 def also_likes_graph(data, doc_uuid, visitor_uuid=None):
