@@ -1,6 +1,6 @@
 import argparse
 import matplotlib.pyplot as plt
-from data_processing import load_data   #function to load data from JSON
+from data_processing import load_data   # import function to load data from JSON
 from top_readers import analyze_top_readers     #function to analyze top readers
 from display_histogram import country_histogram, continent_histogram, detailed_browser_histogram, browser_histogram 
 from also_likes import also_likes_graph, also_likes     #function for also like
