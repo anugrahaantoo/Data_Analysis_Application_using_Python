@@ -65,25 +65,27 @@ def generate_also_likes_graph(df, doc_uuid, visitor_uuid=None):
     for reader in readers:
         related_docs = df[df['visitor_uuid'] == reader]['subject_doc_id'].unique()
         for doc in related_docs:
-            all_relationships.append((reader[-4:], doc[-4:]))
+            # Safely convert to string and slice
+            all_relationships.append((str(reader)[-4:], str(doc)[-4:]))
 
     # Create the Graphviz Digraph
     graph = Digraph(format='pdf')
     graph.attr(ranksep='.75', ratio='compress', size='15,22', orientation='landscape', rotate='180')
 
     # Highlight the input document
-    graph.node(doc_uuid[-4:], label=f"{doc_uuid[-4:]}", shape="circle", style="filled", color=".3 .9 .7")
+    graph.node(str(doc_uuid)[-4:], label=f"{str(doc_uuid)[-4:]}", shape="circle", style="filled", color=".3 .9 .7")
 
     # Add reader nodes
     for reader in readers:
+        reader_str = str(reader)[-4:]  # Safely convert to string
         if reader == visitor_uuid:  # Highlight the input visitor
-            graph.node(reader[-4:], label=f"{reader[-4:]}", shape="box", style="filled", color=".3 .9 .7")
+            graph.node(reader_str, label=f"{reader_str}", shape="box", style="filled", color=".3 .9 .7")
         else:
-            graph.node(reader[-4:], label=f"{reader[-4:]}", shape="box")
+            graph.node(reader_str, label=f"{reader_str}", shape="box")
 
     # Add document nodes and arrows
     for reader, doc in all_relationships:
-        if doc != doc_uuid[-4:]:
+        if doc != str(doc_uuid)[-4:]:
             graph.node(doc, label=f"{doc}", shape="circle")
         graph.edge(reader, doc)
 
@@ -92,7 +94,7 @@ def generate_also_likes_graph(df, doc_uuid, visitor_uuid=None):
         readers_rank.attr(rank="same")
         readers_rank.node("Readers")
         for reader in readers:
-            readers_rank.node(reader[-4:])
+            readers_rank.node(str(reader)[-4:])
 
     with graph.subgraph() as documents_rank:
         documents_rank.attr(rank="same")
@@ -101,10 +103,9 @@ def generate_also_likes_graph(df, doc_uuid, visitor_uuid=None):
             documents_rank.node(doc)
 
     # Render the graph to both .ps and .pdf formats
-    output_base_path = f"also_likes_{doc_uuid[-4:]}"
+    output_base_path = f"also_likes_{str(doc_uuid)[-4:]}"
     ps_output_path = graph.render(output_base_path, format='ps')  # PostScript
     pdf_output_path = graph.render(output_base_path, format='pdf')  # PDF
 
     print(f"Graph generated as PostScript: {ps_output_path}")
     print(f"Graph generated as PDF: {pdf_output_path}")
-    
