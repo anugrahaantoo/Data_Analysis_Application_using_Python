@@ -4,7 +4,8 @@ from reader_analysis import analyze_top_readers
 from visualization import generate_country_histogram, generate_continent_histogram, generate_main_browser_histogram
 from also_likes import generate_also_likes_graph
 from gui import Application
-
+from gui import continent_mapping 
+from data_analysis import extract_browser_name
 
 def run_task_2a(file_name, doc_uuid):
     """Task 2a: Generate a histogram of countries of the viewers."""
@@ -20,10 +21,8 @@ def run_task_2b(file_name, doc_uuid):
     """Task 2b: Generate a histogram of continents of the viewers."""
     df = load_data(file_name)
     if df is not None:
-        # Use the continent mapping from the GUI
-        app = Application()  # Create an instance of the Application class
-        continent_mapping = app.generate_continent_histogram.__defaults__[1]  # Extract mapping from GUI
         try:
+            # Now we can directly use the continent_mapping imported from gui.py
             generate_continent_histogram(df, doc_uuid, continent_mapping)
             print("Continent histogram generated successfully.")
         except Exception as e:
@@ -41,13 +40,24 @@ def run_task_3a(file_name):
 
 
 def run_task_3b(file_name):
-    """Task 3b: Display a histogram of main browser names."""
+    """Task 3b: Process and display browser identifiers."""
     df = load_data(file_name)
     if df is not None:
-        df['main_browser'] = df['browser_id'].apply(lambda x: extract_browser_name(x))
-        generate_main_browser_histogram(df)
+        # Print the columns of the DataFrame for debugging
+        print("Columns in the DataFrame:", df.columns)
+
+        # Check if the 'browser_id' column exists before trying to use it
+        if 'browser_id' in df.columns:
+            df['main_browser'] = df['browser_id'].apply(lambda x: extract_browser_name(x))
+            print(df[['browser_id', 'main_browser']])
+        elif 'user_agent' in df.columns:
+            # If 'browser_id' is not found, use 'user_agent' column instead
+            df['main_browser'] = df['user_agent'].apply(lambda x: extract_browser_name(x))
+            print(df[['user_agent', 'main_browser']])
+        else:
+            print("Error: Neither 'browser_id' nor 'user_agent' columns found. Please check the data.")
     else:
-        print("Failed to load data for Task 3b.")
+        print("Failed to load data.")
 
 
 def run_task_4(file_name):
@@ -67,7 +77,7 @@ def run_task_5(doc_uuid, file_name):
     df = load_data(file_name)
     if df is not None:
         liked_docs = also_likes(df, doc_uuid)
-        print(f"Also Likes for document {doc_uuid}: {liked_docs}")
+        print(f"Also Likes for document:\n {doc_uuid}: {liked_docs}\n")
     else:
         print("Failed to load data for Task 5.")
 
