@@ -1,5 +1,4 @@
 from graphviz import Digraph
-import pandas as pd
 import matplotlib.pyplot as plt
 from PIL import Image
 
@@ -34,8 +33,8 @@ def also_likes(data, doc_uuid, visitor_uuid=None):
     readers = get_readers_of_document(data, doc_uuid)
 
     # Optionally filter readers for a specific visitor
-    if visitor_uuid:
-        readers = [visitor_uuid] if visitor_uuid in readers else []
+    if visitor_uuid and visitor_uuid not in readers:
+        readers.append(visitor_uuid)
 
     # Get documents liked by these readers
     liked_docs = data[data['visitor_uuid'].isin(readers)]['subject_doc_id']
@@ -51,68 +50,100 @@ def also_likes(data, doc_uuid, visitor_uuid=None):
     return doc_counts.head(10).index.tolist()
 
 
-def also_likes_graph(df, doc_uuid, visitor_uuid=None):
+def also_likes_graph(data, doc_uuid, visitor_uuid=None):
     """
-    Generate an 'Also Likes' graph with ranks for readers and documents.
-    Highlight the input document and optionally an input visitor.
+    Generate a graph showing the input document, "also liked" documents read by its readers,
+    and only the readers of the input document. Highlight the input document and user, with arrows
+    capturing the "has-read" relationship. If no reader of the input document has read a "also liked"
+    document, it will be excluded.
+    
+    :param data: DataFrame containing 'subject_doc_id' and 'visitor_uuid'.
+    :param doc_uuid: Document UUID to create the graph for.
+    :param visitor_uuid: Optional visitor UUID to highlight in the graph.
     """
-    # Get readers for the input document
-    readers = df[df['subject_doc_id'] == doc_uuid]['visitor_uuid'].unique()
-    if not readers.size:
-        print("No readers found for the given document.")
-        return None
 
-    # Collect relationships for the graph
-    all_relationships = []
-    for reader in readers:
-        related_docs = df[df['visitor_uuid'] == reader]['subject_doc_id'].unique()
-        for doc in related_docs:
-            # Safely convert to string and slice
-            all_relationships.append((str(reader)[-4:], str(doc)[-4:]))
+    # Readers of the input document
+    input_readers = get_readers_of_document(data, doc_uuid)
 
-    # Create the Graphviz Digraph
-    graph = Digraph(format='png')  # Use PNG for easy plotting
-    graph.attr(ranksep='.75', ratio='compress', size='15,22', orientation='landscape', rotate='180')
+    # Ensure visitor_uuid is added to input_readers if provided
+    if visitor_uuid and visitor_uuid not in input_readers:
+        input_readers.append(visitor_uuid)
 
-    # Highlight the input document
-    graph.node(str(doc_uuid)[-4:], label=f"{str(doc_uuid)[-4:]}", shape="circle", style="filled", color=".3 .9 .7")
+    # Get "also liked" documents that are read by input readers
+    related_docs = also_likes(data, doc_uuid)
+    filtered_docs = []  # Will store documents read by input document readers
+    shared_readers = {}  # Readers for each filtered document
 
-    # Add reader nodes
-    for reader in readers:
-        reader_str = str(reader)[-4:]  # Safely convert to string
-        if reader == visitor_uuid:  # Highlight the input visitor
-            graph.node(reader_str, label=f"{reader_str}", shape="box", style="filled", color=".3 .9 .7")
-        else:
-            graph.node(reader_str, label=f"{reader_str}", shape="box")
+    for related_doc in related_docs:
+        # Readers of this "also liked" document
+        related_readers = get_readers_of_document(data, related_doc)
+        # Filter to keep only those who also read the input document
+        common_readers = list(set(input_readers) & set(related_readers))
+        if common_readers:
+            filtered_docs.append(related_doc)
+            shared_readers[related_doc] = common_readers
 
-    # Add document nodes and arrows
-    for reader, doc in all_relationships:
-        if doc != str(doc_uuid)[-4:]:
-            graph.node(doc, label=f"{doc}", shape="circle")
-        graph.edge(reader, doc)
+    # Create a directed graph
+    graph = Digraph(format='png')
+    graph.attr(ranksep='1.0', size='15,10', ratio='compress')
 
-    # Set ranks for Readers and Documents
-    with graph.subgraph() as readers_rank:
-        readers_rank.attr(rank="same")
-        readers_rank.node("Readers")
+    # Highlight the input document node
+    graph.node(
+        str(doc_uuid)[-4:], 
+        label=f"{str(doc_uuid)[-4:]}", 
+        shape="circle", 
+        style="filled", 
+        color="lightgreen"
+    )
+
+    # Add nodes for filtered "also liked" documents
+    for related_doc in filtered_docs:
+        graph.node(
+            str(related_doc)[-4:], 
+            label=f"{str(related_doc)[-4:]}", 
+            shape="circle"
+        )
+
+    # Track added edges to avoid duplicates
+    added_edges = set()
+
+    # Add reader nodes and edges
+    for related_doc, readers in shared_readers.items():
         for reader in readers:
-            readers_rank.node(str(reader)[-4:])
+            reader_short = str(reader)[-4:]  # Shorten UUID
+            # Highlight the specified visitor if it is among the shared readers
+            if visitor_uuid and reader == visitor_uuid:
+                graph.node(
+                    reader_short, 
+                    label=reader_short, 
+                    shape="box", 
+                    style="filled", 
+                    color="lightgreen"
+                )
+            else:
+                graph.node(reader_short, label=reader_short, shape="box")
 
-    with graph.subgraph() as documents_rank:
-        documents_rank.attr(rank="same")
-        documents_rank.node("Documents")
-        for _, doc in all_relationships:
-            documents_rank.node(doc)
+            # Add edge from the reader to the input document
+            edge_to_input = (reader_short, str(doc_uuid)[-4:])
+            if edge_to_input not in added_edges:
+                graph.edge(*edge_to_input)
+                added_edges.add(edge_to_input)
 
-    # Save the graph as PNG for display
+            # Add edge from the reader to the related document
+            edge_to_related = (reader_short, str(related_doc)[-4:])
+            if edge_to_related not in added_edges:
+                graph.edge(*edge_to_related)
+                added_edges.add(edge_to_related)
+
+    # Save and display the graph
     output_base_path = f"also_likes_{str(doc_uuid)[-4:]}"
-    png_output_path = graph.render(output_base_path, format='png')  # Save as PNG
+    png_output_path = graph.render(output_base_path, format='png')
 
-    # Display the graph as a plot
+    # Display the generated graph as an image
     img = Image.open(png_output_path)
     plt.figure(figsize=(12, 8))
     plt.imshow(img)
     plt.axis('off')
     plt.show()
 
-    print(f"Graph generated and displayed as PNG: {png_output_path}")
+    print(f"Graph generated and saved to: {png_output_path}")
