@@ -10,14 +10,7 @@ In this project, we developed a data analytics application to analyze user inter
 
 Additionally, we implemented a feature to recommend documents that users who interact with a specific document also like. The system enables filtering by document UUID and visitor ID, ensuring flexibility in analysis. We have also included error handling for missing or invalid data inputs.
 
-###  Assumptions
 
-- **Dataset Format**: Structured JSON or gzipped JSON containing fields like document UUID, visitor UUID, browser, country, continent, and time spent.
-- **Document UUID** uniquely identifies each document.
-- **"Also Likes" Feature** is based on shared user interactions.
-- **Geolocation Mapping**: Visitor countries are mapped to continents.
-
----
 
 ##  Requirements Checklist
 
@@ -28,13 +21,6 @@ Additionally, we implemented a feature to recommend documents that users who int
 - “Also Likes” List & Graph: Document recommendations and visual graph  
 - GUI: Tkinter-based user interface  
 - CLI: Command-line testing for automation  
-
----
-
-##  Individual Contributions
-
-- **Anugraha**: “Also Likes” functionality, Graph, GUI  
-- **Archana**: Views by Country/Continent, Browser Histograms, Reader Profiles, CLI  
 
 ---
 
