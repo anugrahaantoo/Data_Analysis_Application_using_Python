@@ -1,28 +1,90 @@
-# 📊 Data Analysis Application Using Python
+#  Data Analysis Application Using Python
 
-A Python-based GUI application designed to analyze and visualize large datasets (over 3 million records). This project combines efficient data handling, interactive user interface, and collaborative development to deliver a powerful data analysis tool.
-
----
-
-## 🚀 Features
-
-- 📈 **Interactive Visualizations**: Generate plots and charts dynamically based on user input.
-- 🗂 **Large Dataset Handling**: Capable of processing and analyzing datasets with over 3 million entries.
-- 🧠 **Data Analysis Tools**: Includes filtering, grouping, summarizing, and statistical insights.
-- 🖥 **User-Friendly GUI**: Built using libraries like `Tkinter` / `PyQt` (mention whichever you used).
-- 🤝 **Collaborative Development**: Designed and implemented by a team using Agile practices.
+A Python-based GUI application designed to analyze user interactions with documents using large-scale data (3M+ records). It combines data analytics, interactive visualizations, and advanced processing tools into a user-friendly interface with both GUI and CLI functionality.
 
 ---
 
-## 🛠 Tech Stack
+## Introduction
 
-- **Programming Language**: Python
-- **GUI Framework**: Tkinter / PyQt / Streamlit (choose your framework)
-- **Data Libraries**: Pandas, NumPy
-- **Visualization**: Matplotlib, Seaborn, Plotly
-- **Version Control**: Git & GitHub
+In this project, we developed a data analytics application to analyze user interactions with documents. The application features a graphical user interface (GUI) that allows us to load and process interaction data, generate various histograms (e.g., browser, country, and continent), and identify the top 10 readers based on time spent on documents.
+
+Additionally, we implemented a feature to recommend documents that users who interact with a specific document also like. The system enables filtering by document UUID and visitor ID, ensuring flexibility in analysis. We have also included error handling for missing or invalid data inputs.
+
+###  Assumptions
+
+- **Dataset Format**: Structured JSON or gzipped JSON containing fields like document UUID, visitor UUID, browser, country, continent, and time spent.
+- **Document UUID** uniquely identifies each document.
+- **"Also Likes" Feature** is based on shared user interactions.
+- **Geolocation Mapping**: Visitor countries are mapped to continents.
 
 ---
 
-## 📂 Project Structure
+##  Requirements Checklist
 
+- Implemented in Python 3  
+- Views by Country/Continent: Histograms  
+- Views by Browser: Simplified & detailed histograms  
+- Top Readers: Top 10 profiles based on reading time  
+- “Also Likes” List & Graph: Document recommendations and visual graph  
+- GUI: Tkinter-based user interface  
+- CLI: Command-line testing for automation  
+
+---
+
+##  Individual Contributions
+
+- **Anugraha**: “Also Likes” functionality, Graph, GUI  
+- **Archana**: Views by Country/Continent, Browser Histograms, Reader Profiles, CLI  
+
+---
+
+## 🛠 Design Considerations
+
+###  File Structure
+
+- `display_histogram.py`  
+- `data_processing.py`  
+- `also_likes.py`  
+- `top_readers.py`  
+- `cw2.py`  
+- `gui.py`  
+- `main.py`
+
+###  GUI Design (Tkinter)
+
+- Input fields for Document UUID, Visitor UUID (optional), and file path  
+- Task-specific buttons  
+- Graphs shown in separate windows  
+- Input validation and error messaging  
+
+###  Advanced Coding Techniques
+
+- **Dask**: Parallel data processing for large datasets  
+- **Generators**: Memory-efficient line-by-line file processing  
+- **Graphviz**: Graph visualization of document relationships  
+
+###  Usability Enhancements
+
+- Interactive GUI for general users  
+- CLI support for automated testing  
+- Visual feedback, informative error messages  
+
+---
+
+##  User Guide
+
+### GUI Usage
+
+1. **Load Data**: Browse and load JSON or .gz files.  
+2. **Generate Histograms**:  
+   - Country / Continent views  
+   - Browser usage (simplified and detailed)  
+3. **Top Readers**: View top 10 readers by time spent  
+4. **Also Likes**:  
+   - List of similar documents  
+   - Graph of relationships between documents and users  
+
+### CLI Usage
+
+```bash
+python cw2.py -t <task_id> -f <file_name> -d <doc_uuid> -v <visitor_uuid>
